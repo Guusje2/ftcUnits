@@ -139,7 +139,7 @@ public class DriverOp2 extends OpMode {
         public void sidemoving(int speed) {
             MotorBackLeft.setPower(speed);
             MotorFrontLeft.setPower(-speed);
-            MotorBackRight.setPower(-speed);
+            MotorBackRight.setPower(-speed);e
             MotorFrontRight.setPower(speed);
         }
     }

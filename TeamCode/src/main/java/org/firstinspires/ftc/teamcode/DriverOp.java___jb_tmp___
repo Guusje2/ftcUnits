@@ -1,0 +1,109 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+
+/**
+ * Created by guus on 9/23/2017.
+ * FTC 2017, FTCUnits
+ * Basis motor controller, nog niet af
+ */
+
+@TeleOp(name = "DriverOp", group = "Guus")
+
+public class DriverOp extends OpMode {
+
+
+
+    private DcMotor MotorFrontRight;
+    private DcMotor MotorFrontLeft;
+    private DcMotor MotorBackRight;
+    private DcMotor MotorBackLeft;
+   // public  boolean IsControlled = true;
+    private Servo BekServo1;
+    private Servo BekServo2;
+    double driveDirectionSpeed = 1 ;
+    private float x;
+    private float y;
+    private double Servo1Power;
+    private double Servo2Power;
+
+
+    @Override
+    public void init() {
+        MotorBackLeft   = hardwareMap.dcMotor.get("MotorBackLeft");
+        MotorBackRight  = hardwareMap.dcMotor.get("MotorBackRight");
+        MotorFrontLeft  = hardwareMap.dcMotor.get("MotorFrontLeft");
+        MotorFrontRight = hardwareMap.dcMotor.get("MotorFrontRight");
+        BekServo1 = hardwareMap.servo.get("BekServo1");
+        BekServo2 = hardwareMap.servo.get("BekServo2");
+        driveDirectionSpeed  = 1;
+
+
+    }
+
+    @Override
+    public void loop() {
+
+            SpeedChecks();
+            DriveChecks();
+    }
+
+
+    void  DriveChecks () {
+        MotorBackLeft.setPower(-1 * driveDirectionSpeed * gamepad1.left_stick_y);
+        MotorFrontLeft.setPower(-1  * driveDirectionSpeed * gamepad1.left_stick_y);
+        MotorBackRight.setPower(1 * driveDirectionSpeed * gamepad1.right_stick_y);
+        MotorFrontRight.setPower(1 * driveDirectionSpeed * gamepad1.right_stick_y);
+    }
+
+    void SpeedChecks() {
+
+        if (gamepad1.back) {
+            double temp;
+            temp = driveDirectionSpeed;
+            driveDirectionSpeed = temp * -1;
+        }
+
+        if(gamepad1.left_bumper){
+            if(x != -1)
+            x -= 0.05;
+        }
+        if (gamepad1.right_bumper){
+            if(x != 1)
+            x += 0.05;
+        }
+
+        y = x*x*x;
+        if(x < 0){
+            y = y * -1;
+        }
+
+        driveDirectionSpeed = y;
+        if (gamepad2.dpad_down){
+        BekDicht();
+        }
+        if (gamepad2.dpad_up){
+         BekOpen();
+         }
+
+
+    }
+
+    void BekDicht () {
+        double d1 = BekServo1.getPosition() +0.01;
+        double d2 = BekServo2.getPosition() -0.01;
+        BekServo1.setPosition(d1);
+        BekServo2.setPosition(d2);
+    }
+    void BekOpen () {
+        double d3 = 0;
+        d3 = BekServo1.getPosition() - 0.01;
+        double d4 =  0;
+        d4= BekServo2.getPosition() + 0.01;
+        BekServo1.setPosition(d3);
+        BekServo2.setPosition(d4);
+    }
+}

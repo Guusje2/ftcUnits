@@ -54,7 +54,13 @@ public class DriverOp2 extends OpMode {
         BekServo2.setDirection(Servo.Direction.REVERSE);
         BekServo1.setPosition(1);
         BekServo2.setPosition(1);
+        try {
+            logUtils.StartLogging(1);
+        } catch (Exception e) {
 
+        }
+
+        logUtils.Log(logUtils.logType.normal, "test", 1);
 
     }
 
@@ -139,7 +145,7 @@ public class DriverOp2 extends OpMode {
         public void sidemoving(int speed) {
             MotorBackLeft.setPower(speed);
             MotorFrontLeft.setPower(-speed);
-            MotorBackRight.setPower(-speed);e
+            MotorBackRight.setPower(-speed);
             MotorFrontRight.setPower(speed);
         }
     }

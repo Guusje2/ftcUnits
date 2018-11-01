@@ -35,4 +35,9 @@ public class testController extends OpMode {
     public void loop() {
 
     }
+    
+    @Override
+    public void stop() {
+        logUtils.StopLogging(1);
+    }
 }

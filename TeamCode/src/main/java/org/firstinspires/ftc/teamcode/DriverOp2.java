@@ -45,22 +45,23 @@ public class DriverOp2 extends OpMode {
         MotorBackRight  = hardwareMap.dcMotor.get("MotorBackRight");
         MotorFrontLeft  = hardwareMap.dcMotor.get("MotorFrontLeft");
         MotorFrontRight = hardwareMap.dcMotor.get("MotorFrontRight");
-        ArmMotor = hardwareMap.dcMotor.get("ArmMotor");
-        BekServo1 = hardwareMap.servo.get("BekServo1");
-        BekServo2 = hardwareMap.servo.get("BekServo2");
-        BakMotor = hardwareMap.dcMotor.get("BakMotor");
-        testSensor = hardwareMap.colorSensor.get("testSensor");
+      //  ArmMotor = hardwareMap.dcMotor.get("ArmMotor");
+       // BekServo1 = hardwareMap.servo.get("BekServo1");
+       /// BekServo2 = hardwareMap.servo.get("BekServo2");
+       // BakMotor = hardwareMap.dcMotor.get("BakMotor");
+      //  testSensor = hardwareMap.colorSensor.get("testSensor");
         driveDirectionSpeed  = 1;
-        BekServo2.setDirection(Servo.Direction.REVERSE);
-        BekServo1.setPosition(1);
-        BekServo2.setPosition(1);
+     //   BekServo2.setDirection(Servo.Direction.REVERSE);
+     //   BekServo1.setPosition(1);
+     //   BekServo2.setPosition(1);
         try {
             logUtils.StartLogging(1);
         } catch (Exception e) {
 
         }
 
-        logUtils.Log(logUtils.logType.normal, "test", 1);
+        logUtils.Log(logUtils.logType.normal, "Started the DriverOp2 opmode", 1);
+        logUtils.Log(logUtils.logType.normal, "Backleft,Frontleft,BackRight,Frontright", 1);
 
     }
 
@@ -70,19 +71,24 @@ public class DriverOp2 extends OpMode {
         SpeedChecks();
         DriveChecks();
 
-        ArmChecks();
-        telemetry.addData("color",testSensor.alpha());
+      //  ArmChecks();
+        //telemetry.addData("color",testSensor.alpha());
 
 
     }
 
 
     void  DriveChecks () {
+        double BackLeft = 1 * driveDirectionSpeed * gamepad1.left_stick_y;
+        double FrontLeft = 1 * driveDirectionSpeed * gamepad1.left_stick_y ;
+        double BackRight = -1 * driveDirectionSpeed * gamepad1.right_stick_y ;
+        double FrontRight = -1 * driveDirectionSpeed * gamepad1.right_stick_y;
 
-        MotorBackLeft.setPower(-1 * driveDirectionSpeed * gamepad1.left_stick_y);
-        MotorFrontLeft.setPower(-1 * driveDirectionSpeed * gamepad1.left_stick_y);
-        MotorBackRight.setPower(1 * driveDirectionSpeed * gamepad1.right_stick_y);
-        MotorFrontRight.setPower(1 * driveDirectionSpeed * gamepad1.right_stick_y);
+        logUtils.Log(logUtils.logType.normal, BackLeft + "," + FrontLeft + "," + BackRight + "," + FrontRight, 1 );
+        MotorBackLeft.setPower(BackLeft);
+        MotorFrontLeft.setPower(FrontLeft);
+        MotorBackRight.setPower(BackRight);
+        MotorFrontRight.setPower(FrontRight);
     }
 
     void ArmChecks() {
@@ -122,17 +128,17 @@ public class DriverOp2 extends OpMode {
         }
 
         driveDirectionSpeed = y;
-        BakMotor.setPower(gamepad2.right_stick_y * -0.25);
+       // BakMotor.setPower(gamepad2.right_stick_y * -0.25);
 
 
         
-       if (gamepad2.left_bumper)
-           ServoPosition = ClosedPos;
-        if (gamepad2.right_bumper)
-            ServoPosition = OpenPos;
+       //if (gamepad2.left_bumper)
+     //      ServoPosition = ClosedPos;
+      //  if (gamepad2.right_bumper)
+   //         ServoPosition = OpenPos;
         
-        BekServo1.setPosition(ServoPosition - 0.1);
-        BekServo2.setPosition(ServoPosition+0.25);
+    //    BekServo1.setPosition(ServoPosition - 0.1);
+    //    BekServo2.setPosition(ServoPosition+0.25);
         if (gamepad1.dpad_left) {
             sidemoving(-1);
         }

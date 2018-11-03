@@ -44,8 +44,7 @@ public class Motorcontroller extends OpMode {
     public void loop() {
         if (IsControlled) {
             DriveChecks();
-           // ArmChecks();
-            EnableAI();
+
         }
         if(gamepad1.b) {
             Servo1.setPosition(0.1);

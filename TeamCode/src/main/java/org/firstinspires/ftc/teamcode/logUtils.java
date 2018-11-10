@@ -63,7 +63,7 @@ public class logUtils {
     public static void Log(logType type, String message, int id) {
 
         try {
-            filewriters.get(id).write(type.toString() + "," + Calendar.getInstance().getTime() + "," + message);
+            filewriters.get(id).write("/n"+ type.toString() + "," + Calendar.getInstance().getTime() + "," + message);
         } catch (IOException e) {
             e.printStackTrace();
         }

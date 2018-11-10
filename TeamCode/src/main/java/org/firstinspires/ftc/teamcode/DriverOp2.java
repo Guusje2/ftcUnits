@@ -79,10 +79,10 @@ public class DriverOp2 extends OpMode {
 
 
     void  DriveChecks () {
-        double BackLeft = 1 * driveDirectionSpeed * gamepad1.left_stick_y;
-        double FrontLeft = 1 * driveDirectionSpeed * gamepad1.left_stick_y ;
-        double BackRight = -1 * driveDirectionSpeed * gamepad1.right_stick_y ;
-        double FrontRight = -1 * driveDirectionSpeed * gamepad1.right_stick_y;
+        double BackLeft = 1 * driveDirectionSpeed * -gamepad1.left_stick_y;
+        double FrontLeft = 1 * driveDirectionSpeed * -gamepad1.left_stick_y ;
+        double BackRight = -1 * driveDirectionSpeed * -gamepad1.right_stick_y ;
+        double FrontRight = -1 * driveDirectionSpeed * -gamepad1.right_stick_y;
 
         logUtils.Log(logUtils.logType.normal, BackLeft + "," + FrontLeft + "," + BackRight + "," + FrontRight, 1 );
         MotorBackLeft.setPower(BackLeft);

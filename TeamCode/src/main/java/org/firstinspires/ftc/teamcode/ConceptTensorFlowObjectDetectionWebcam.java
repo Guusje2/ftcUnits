@@ -32,6 +32,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -57,7 +59,10 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
     private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
-
+    private DcMotor MotorFrontLeft;
+    private DcMotor MotorBackLeft;
+    private DcMotor MotorFrontRight;
+    private DcMotor MotorBackRight;
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
      * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
@@ -89,6 +94,10 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
         initVuforia();
+        MotorBackLeft = hardwareMap.dcMotor.get("MotorBackLeft");
+        MotorBackRight = hardwareMap.dcMotor.get("MotorBackRight");
+        MotorFrontLeft = hardwareMap.dcMotor.get("MotorFrontLeft");
+        MotorFrontRight = hardwareMap.dcMotor.get("MotorFrontRight");
 
         if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
             initTfod();
@@ -102,12 +111,18 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
+            if (gamepad1.a){
+                MoveSideWays(1);
+            }
             /** Activate Tensor Flow Object Detection. */
             if (tfod != null) {
                 tfod.activate();
             }
 
             while (opModeIsActive()) {
+                if (gamepad1.a){
+                    MoveSideWays(1);
+                }
                 if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
@@ -130,10 +145,13 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                         if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
                           if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
                             telemetry.addData("Gold Mineral Position", "Left");
+                            MoveSideWays(1);
                           } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
                             telemetry.addData("Gold Mineral Position", "Right");
+                            MoveSideWays(-1);
                           } else {
                             telemetry.addData("Gold Mineral Position", "Center");
+                            MoveForward(0.75f);
                           }
                         }
                       }
@@ -175,5 +193,23 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
+    }
+
+    /**
+     * for driving sideways, also called strafing
+     * @param direction 1=right, -1=left
+     */
+    public void MoveSideWays(int  direction) {
+        MotorBackLeft.setPower(direction);
+        MotorFrontLeft.setPower(-direction);
+        MotorBackRight.setPower(-direction);
+        MotorFrontRight.setPower(direction);
+    }
+
+    public void MoveForward(float speed){
+        MotorFrontRight.setPower(-speed*.5);
+        MotorBackRight.setPower(-speed*.5 );
+        MotorFrontLeft.setPower(speed*.5 );
+        MotorBackLeft.setPower(speed*.5 );
     }
 }

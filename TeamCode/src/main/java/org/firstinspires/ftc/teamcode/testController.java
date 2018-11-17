@@ -33,7 +33,7 @@ public class testController extends OpMode {
 
     @Override
     public void loop() {
-
+        logUtils.Log(logUtils.logType.normal, Double.toString( Math.random()), 1);
     }
     
     @Override

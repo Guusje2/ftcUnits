@@ -23,11 +23,9 @@ public class DriverOp2 extends OpMode {
     private DcMotor MotorFrontLeft;
     private DcMotor MotorBackRight;
     private DcMotor MotorBackLeft;
-    private DcMotor ArmMotor;
-    private DcMotor BakMotor;
+    private Servo BlockBoxServo;
     public  boolean IsControlled = true;
-    private Servo BekServo1;
-    private Servo BekServo2;
+    private DcMotor LiftMotor;
     double driveDirectionSpeed = 1 ;
     private ColorSensor testSensor;
     private float x;
@@ -45,6 +43,9 @@ public class DriverOp2 extends OpMode {
         MotorBackRight  = hardwareMap.dcMotor.get("MotorBackRight");
         MotorFrontLeft  = hardwareMap.dcMotor.get("MotorFrontLeft");
         MotorFrontRight = hardwareMap.dcMotor.get("MotorFrontRight");
+        LiftMotor = hardwareMap.dcMotor.get("LiftMotor");
+        BlockBoxServo = hardwareMap.servo.get("BlockBoxServo");
+
       //  ArmMotor = hardwareMap.dcMotor.get("ArmMotor");
        // BekServo1 = hardwareMap.servo.get("BekServo1");
        /// BekServo2 = hardwareMap.servo.get("BekServo2");
@@ -91,16 +92,6 @@ public class DriverOp2 extends OpMode {
         MotorFrontRight.setPower(FrontRight);
     }
 
-    void ArmChecks() {
-        if(gamepad2.a)
-            ArmMotor.setPower(-0.4);
-
-        if (gamepad2.y)
-            ArmMotor.setPower(0.4);
-        if(gamepad2.x)
-            ArmMotor.setPower(0);
-    }
-
     void SpeedChecks() {
 
 
@@ -111,7 +102,11 @@ public class DriverOp2 extends OpMode {
             driveDirectionSpeed = temp * -1;
         }
 
-
+        if (gamepad1.x){
+            BLockBoxOpen();
+        } else {
+            BlockBoxClose();
+        }
 
         if(gamepad1.left_bumper){
             if(x != -1)
@@ -128,23 +123,13 @@ public class DriverOp2 extends OpMode {
         }
 
         driveDirectionSpeed = y;
-       // BakMotor.setPower(gamepad2.right_stick_y * -0.25);
-
-
-        
-       //if (gamepad2.left_bumper)
-     //      ServoPosition = ClosedPos;
-      //  if (gamepad2.right_bumper)
-   //         ServoPosition = OpenPos;
-        
-    //    BekServo1.setPosition(ServoPosition - 0.1);
-    //    BekServo2.setPosition(ServoPosition+0.25);
         if (gamepad1.dpad_left) {
-            sidemoving(-1);
-        }
-        if (gamepad1.dpad_right) {
             sidemoving(1);
         }
+        if (gamepad1.dpad_right) {
+            sidemoving(-1);
+        }
+        LiftMotor.setPower(gamepad2.left_stick_y);
 
     }
 
@@ -154,7 +139,21 @@ public class DriverOp2 extends OpMode {
             MotorBackRight.setPower(-speed);
             MotorFrontRight.setPower(speed);
         }
+
+    /**
+     * Opens the BlockBox, used for teammaker/game elements
+     */
+    public void BLockBoxOpen () {
+        BlockBoxServo.setPosition(180);
     }
+
+    /**
+     * Closes the BlockBox, used for teammarker/game elements
+     */
+    public void BlockBoxClose () {
+        BlockBoxServo.setPosition(95);
+    }
+}
 
 
 

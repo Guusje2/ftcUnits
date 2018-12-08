@@ -14,7 +14,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name = "LogUtilsTest", group = "Guus")
 
 public class testController extends OpMode {
-
+    private DcMotor MotorFrontLeft;
+    private DcMotor MotorBackLeft;
+    private DcMotor MotorFrontRight;
+    private DcMotor MotorBackRight;
 
 
 
@@ -27,6 +30,10 @@ public class testController extends OpMode {
         } catch (Exception e) {
 
         }
+        MotorBackLeft = hardwareMap.dcMotor.get("MotorBackLeft");
+        MotorBackRight = hardwareMap.dcMotor.get("MotorBackRight");
+        MotorFrontLeft = hardwareMap.dcMotor.get("MotorFrontLeft");
+        MotorFrontRight = hardwareMap.dcMotor.get("MotorFrontRight");
 
         logUtils.Log(logUtils.logType.normal, "test", 1);
     }
@@ -34,10 +41,22 @@ public class testController extends OpMode {
     @Override
     public void loop() {
         logUtils.Log(logUtils.logType.normal, Double.toString( Math.random()), 1);
+        Turn(-1);
     }
     
     @Override
     public void stop() {
         logUtils.StopLogging(1);
+    }
+
+    /**
+     * For turning the robot whilst staying in  place
+     * @param speed the speed the robot turns
+     */
+    public void Turn(float speed) {
+        MotorFrontRight.setPower(speed * .5);
+        MotorBackRight.setPower(speed * .5);
+        MotorFrontLeft.setPower(speed * .5);
+        MotorBackLeft.setPower(speed * .5);
     }
 }

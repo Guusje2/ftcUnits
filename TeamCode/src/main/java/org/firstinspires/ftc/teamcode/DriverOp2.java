@@ -105,7 +105,7 @@ public class DriverOp2 extends OpMode {
         if (gamepad1.x){
             BLockBoxOpen();
         } else {
-            BlockBoxClose();
+            BlockBoxClose();    
         }
 
         if(gamepad1.left_bumper){

@@ -144,14 +144,14 @@ public class DriverOp2 extends OpMode {
      * Opens the BlockBox, used for teammaker/game elements
      */
     public void BLockBoxOpen () {
-        BlockBoxServo.setPosition(180);
+        BlockBoxServo.setPosition(0);
     }
 
     /**
      * Closes the BlockBox, used for teammarker/game elements
      */
     public void BlockBoxClose () {
-        BlockBoxServo.setPosition(95);
+        BlockBoxServo.setPosition(85);
     }
 }
 

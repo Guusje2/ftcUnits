@@ -18,6 +18,7 @@ public class testController extends OpMode {
     private DcMotor MotorBackLeft;
     private DcMotor MotorFrontRight;
     private DcMotor MotorBackRight;
+    private BNO055IMU imu;
 
 
 
@@ -25,6 +26,20 @@ public class testController extends OpMode {
 
     @Override
     public void init() {
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        double StartTimeDetection = 0;
+        //IMU start
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+        startHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        telemetry.addData("IMU status",imu.isGyroCalibrated());
+        telemetry.addData("StartHeading",  startHeading);
         try {
             logUtils.StartLogging(1);
         } catch (Exception e) {
@@ -40,6 +55,8 @@ public class testController extends OpMode {
 
     @Override
     public void loop() {
+        relativeHeading = startHeading + imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        telemetry.addData("Relative heading:", relativeHeading);
         logUtils.Log(logUtils.logType.normal, Double.toString( Math.random()), 1);
         Turn(-1);
     }

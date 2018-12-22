@@ -31,9 +31,6 @@ public class DriverOp2 extends OpMode {
     private float x;
     private float y;
     BNO055IMU imu;
-    private double ServoPosition = 0.4;
-    private double ClosedPos = 0.35 ;
-    private double OpenPos=0.55;
     private String servomessage;
 
 
@@ -60,6 +57,7 @@ public class DriverOp2 extends OpMode {
         } catch (Exception e) {
 
         }
+        BlockBoxClose();
 
         logUtils.Log(logUtils.logType.normal, "Started the DriverOp2 opmode", 1);
         logUtils.Log(logUtils.logType.normal, "Backleft,Frontleft,BackRight,Frontright", 1);
@@ -101,11 +99,10 @@ public class DriverOp2 extends OpMode {
             temp = driveDirectionSpeed;
             driveDirectionSpeed = temp * -1;
         }
-
         if (gamepad1.x){
             BLockBoxOpen();
         } else {
-            BlockBoxClose();    
+            BlockBoxClose();
         }
 
         if(gamepad1.left_bumper){
@@ -144,14 +141,15 @@ public class DriverOp2 extends OpMode {
      * Opens the BlockBox, used for teammaker/game elements
      */
     public void BLockBoxOpen () {
-        BlockBoxServo.setPosition(180);
+        BlockBoxServo.setPosition(0);
+
     }
 
     /**
      * Closes the BlockBox, used for teammarker/game elements
      */
     public void BlockBoxClose () {
-        BlockBoxServo.setPosition(95);
+        BlockBoxServo.setPosition(65);
     }
 }
 

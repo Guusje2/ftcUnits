@@ -49,7 +49,7 @@ public class PIDLoop {
 		previous_error = error;
 		lastTimeMillis = System.currentTimeMillis();
 		return output;
-		//logUtils.Log(logUtils.logType.normal, toString(dt), ;
+		logUtils.Log(logUtils.logType.normal, toString(dt), ;
 	}
 
 }

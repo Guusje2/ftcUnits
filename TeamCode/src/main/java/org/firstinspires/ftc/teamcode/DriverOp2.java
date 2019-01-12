@@ -32,6 +32,7 @@ public class DriverOp2 extends OpMode {
     private float y;
     BNO055IMU imu;
     private String servomessage;
+    private boolean isLocked;
 
 
     @Override
@@ -59,9 +60,6 @@ public class DriverOp2 extends OpMode {
         }
         BlockBoxClose();
 
-        logUtils.Log(logUtils.logType.normal, "Started the DriverOp2 opmode", 1);
-        logUtils.Log(logUtils.logType.normal, "Backleft,Frontleft,BackRight,Frontright", 1);
-
     }
 
     @Override
@@ -82,8 +80,6 @@ public class DriverOp2 extends OpMode {
         double FrontLeft = 1 * driveDirectionSpeed * -gamepad1.left_stick_y ;
         double BackRight = -1 * driveDirectionSpeed * -gamepad1.right_stick_y ;
         double FrontRight = -1 * driveDirectionSpeed * -gamepad1.right_stick_y;
-
-        logUtils.Log(logUtils.logType.normal, BackLeft + "," + FrontLeft + "," + BackRight + "," + FrontRight, 1 );
         MotorBackLeft.setPower(BackLeft);
         MotorFrontLeft.setPower(FrontLeft);
         MotorBackRight.setPower(BackRight);
@@ -126,7 +122,18 @@ public class DriverOp2 extends OpMode {
         if (gamepad1.dpad_right) {
             sidemoving(-1);
         }
-        LiftMotor.setPower(gamepad2.left_stick_y);
+        if (isLocked){
+            LiftMotor.setPower(-1);
+        } else {
+            LiftMotor.setPower(-gamepad2.left_stick_y);
+        }
+        if(gamepad2.left_stick_button){
+            if (isLocked){
+                isLocked = false;
+            }else{
+                isLocked = true;
+            }
+        }
 
     }
 
@@ -149,7 +156,7 @@ public class DriverOp2 extends OpMode {
      * Closes the BlockBox, used for teammarker/game elements
      */
     public void BlockBoxClose () {
-        BlockBoxServo.setPosition(65);
+        BlockBoxServo.setPosition(.3);
     }
 }
 

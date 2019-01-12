@@ -1,9 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /**
  * Created by guusd on 9/23/2017.
@@ -19,10 +27,8 @@ public class testController extends OpMode {
     private DcMotor MotorFrontRight;
     private DcMotor MotorBackRight;
     private BNO055IMU imu;
-
-
-
-
+    float startHeading;
+    private Rev2mDistanceSensor bottomDistance;
 
     @Override
     public void init() {
@@ -49,16 +55,17 @@ public class testController extends OpMode {
         MotorBackRight = hardwareMap.dcMotor.get("MotorBackRight");
         MotorFrontLeft = hardwareMap.dcMotor.get("MotorFrontLeft");
         MotorFrontRight = hardwareMap.dcMotor.get("MotorFrontRight");
+        bottomDistance = hardwareMap.get(Rev2mDistanceSensor.class, "bottom");
 
         logUtils.Log(logUtils.logType.normal, "test", 1);
     }
 
     @Override
     public void loop() {
-        relativeHeading = startHeading + imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        float relativeHeading = startHeading + imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         telemetry.addData("Relative heading:", relativeHeading);
         logUtils.Log(logUtils.logType.normal, Double.toString( Math.random()), 1);
-        Turn(-1);
+        telemetry.addData("BottomSensorvalue", bottomDistance.getDistance(DistanceUnit.CM));
     }
     
     @Override

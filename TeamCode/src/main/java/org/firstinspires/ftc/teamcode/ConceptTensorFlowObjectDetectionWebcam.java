@@ -61,7 +61,7 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@TeleOp(name = "Concept: TwensorFlow Object Detection Webcam", group = "Concept")
+@TeleOp(name = "Depot side", group = "Concept")
 
 public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
     private enum  mineralPosEnum {none,left,center,right};
@@ -74,8 +74,11 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
     private DcMotor MotorBackLeft;
     private DcMotor MotorFrontRight;
     private DcMotor MotorBackRight;
+    private DcMotor HijsMotor;
     private Servo BlockBoxServo;
     private Rev2mDistanceSensor frontDistance;
+    private Rev2mDistanceSensor bottomDistance;
+    private float LandedDistance = 15.5f; //TODO: meten startwaarde, gemiddelde pakken vnan een aantal metingen
     private float heading;
     private BNO055IMU imu;
     Acceleration gravity;
@@ -141,8 +144,9 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
         MotorFrontLeft = hardwareMap.dcMotor.get("MotorFrontLeft");
         MotorFrontRight = hardwareMap.dcMotor.get("MotorFrontRight");
         BlockBoxServo = hardwareMap.servo.get("BlockBoxServo");
-        Runstate = 60;
+        Runstate = 0;
         frontDistance = hardwareMap.get(Rev2mDistanceSensor.class, "front");
+        bottomDistance = hardwareMap.get(Rev2mDistanceSensor.class, "bottom");
         if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
             initTfod();
         } else {
@@ -164,17 +168,33 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
             while (opModeIsActive()) {
                 logUtils.Log(logUtils.logType.normal,String.valueOf( Runstate), 3);
                 relativeHeading = startHeading + imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
+                telemetry.update();
                 switch (Runstate){
                     case 0:
                         telemetry.addData("Status", "Hanging");
+                        HijsMotor.setPower(1);
+                        if(bottomDistance.getDistance(DistanceUnit.CM) > 15.5){
+                            sleep(50);
+                            continue;
+                        }
                         Runstate = 10;
-                        //HijsMotor.setPower(-0.4);
                         break;
 
 
                     case 10:
                         telemetry.addData("Status", "Dropping");
+
+                        sleep(200);
+                        HijsMotor.setPower(0);
+                        MoveSideWays(1);
+                        sleep(300);
+                        MoveSideWays(0);
+                        HijsMotor.setPower(-1);
+                        sleep(200);
+                        HijsMotor.setPower(0);
+                        MoveSideWays(-1);
+                        sleep(300);
+                        MoveSideWays(0);
                         Runstate = 20;
                         break;
 
@@ -202,7 +222,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                         switch (mineralPos){
                             case left:
                                 MoveForward(.5f);
-                                sleep(1000);
+                                sleep(1400);
                                 MoveForward(0);
                                MoveSideWays(1);
                                 sleep(800);
@@ -217,7 +237,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                                 break;
                            case right:
                                 MoveForward(.5f);
-                                sleep(1000);
+                                sleep(1400);
                                 MoveForward(0);
                                 MoveSideWays(-1);
                                 sleep(800);
@@ -233,13 +253,13 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                                 break;
                             case none:
                                 MoveForward(.5f);
-                                sleep(3800);
+                                sleep(4000);
                                 MoveForward(0);
                                 Runstate = 40;
                              break;
                             case center:
                                 MoveForward(.5f);
-                                sleep(3800);
+                                sleep(4000);
                                 MoveForward(0);
                                 Runstate = 40;
                                 break;
@@ -258,23 +278,40 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                             continue;
                         }
                         MoveForward(0);
+
                         Runstate = 50;
                         break;
 
 
                     case 50:
-                        Turn(2f);
-                        sleep(1200);
-                        Turn(0);
+                        Turn(-1);
+                        if (relativeHeading <115f)
+                        {
+                            continue;
 
+                        }
+                        Turn(0);
+                        Runstate = 55;
+                        break;
+                    case 55:
+                        BLockBoxOpen();
+                        sleep(1000);
+                        BlockBoxClose();
                         Runstate = 60;
                         break;
-                        case 60:
-                         Turn(-1);
-
-
+                    case 60:
+                        MoveForward(.5f);
+                        telemetry.addData("Distance", frontDistance.getDistance(DistanceUnit.CM));
+                        if (frontDistance.getDistance(DistanceUnit.CM) > 30){
+                            sleep(100);
+                            telemetry.addData("Distance", frontDistance.getDistance(DistanceUnit.CM));
+                            continue;
+                        }
+                        MoveForward(0);
+                        Runstate = 70;
+                        break;
                 }
-                telemetry.update();
+
             }
         }
 
@@ -400,14 +437,14 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
      * Opens the BlockBox, used for teammaker/game elements
      */
     public void BLockBoxOpen () {
-        BlockBoxServo.setPosition(180);
+        BlockBoxServo.setPosition(0);
     }
 
     /**
      * Closes the BlockBox, used for teammarker/game elements
      */
     public void BlockBoxClose () {
-        BlockBoxServo.setPosition(95);
+        BlockBoxServo.setPosition(.3);
     }
 
 

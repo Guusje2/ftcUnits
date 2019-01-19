@@ -34,7 +34,6 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -61,9 +60,9 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@TeleOp(name = "Depot side", group = "Concept")
+@TeleOp(name = "Depot side 2", group = "Concept")
 
-public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
+public class ConceptTensorFlowObjectDetectionWebcam2 extends LinearOpMode {
     private enum  mineralPosEnum {none,left,center,right};
     private mineralPosEnum mineralPos;
     public int Runstate = 0;
@@ -207,7 +206,6 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                         sleep(400);
                         MoveForward(0);
                         Runstate = 20;
-                        break;
 
                     case 20:
 
@@ -295,7 +293,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
 
                     case 50:
                         Turn(-1);
-                        if (relativeHeading < 120f)
+                        if (relativeHeading <295f)
                         {
                             continue;
 

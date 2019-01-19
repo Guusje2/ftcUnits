@@ -123,16 +123,15 @@ public class DriverOp2 extends OpMode {
             sidemoving(-1);
         }
         if (isLocked){
-            LiftMotor.setPower(-1);
+            LiftMotor.setPower(-.5);
         } else {
             LiftMotor.setPower(-gamepad2.left_stick_y);
         }
-        if(gamepad2.left_stick_button){
-            if (isLocked){
-                isLocked = false;
-            }else{
+        if(gamepad2.a){
                 isLocked = true;
             }
+            if (gamepad2.b){
+            isLocked = false;
         }
 
     }

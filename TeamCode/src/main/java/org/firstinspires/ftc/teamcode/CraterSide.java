@@ -61,9 +61,9 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@TeleOp(name = "Depot side", group = "Concept")
+@TeleOp(name = "Crater Side", group = "Concept")
 
-public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
+public class CraterSide extends LinearOpMode {
     private enum  mineralPosEnum {none,left,center,right};
     private mineralPosEnum mineralPos;
     public int Runstate = 0;
@@ -114,7 +114,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
     @Override
     public void runOpMode() {
         //IMU parameter setup
-             BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
@@ -129,14 +129,14 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
         telemetry.addData("IMU status",imu.isGyroCalibrated());
         //starting logging
         try {
-                logUtils.StartLogging(3);
+            logUtils.StartLogging(3);
         } catch (Exception e){
 
         }
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
 
-        initVuforia();
+
         Orientation a = imu.getAngularOrientation();
         telemetry.addData("StartHeading",  startHeading);
         MotorBackLeft = hardwareMap.dcMotor.get("MotorBackLeft");
@@ -149,11 +149,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
         HijsMotor.setPower(-.5);
         frontDistance = hardwareMap.get(Rev2mDistanceSensor.class, "front");
         bottomDistance = hardwareMap.get(Rev2mDistanceSensor.class, "bottom");
-        if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
-            initTfod();
-        } else {
-            telemetry.addData("Sorry!", "This device is not compatible with TFOD");
-        }
+
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start tracking");
@@ -162,10 +158,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
 
         if (opModeIsActive()) {
 
-            /** Activate Tensor Flow Object Detection. */
-            if (tfod != null) {
-                tfod.activate();
-            }
+
 
             while (opModeIsActive()) {
                 logUtils.Log(logUtils.logType.normal,String.valueOf( Runstate), 3);
@@ -200,167 +193,24 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                         break;
 
                     case 15:
-                        Turn(-.25f);
-                        sleep(800);
-                        Turn(0);
                         MoveForward(.5f);
-                        sleep(400);
+                        sleep(3000);
                         MoveForward(0);
-                        Runstate = 20;
-                        break;
-
-                    case 20:
-
-                        if (StartTimeDetection == 0){
-                            StartTimeDetection = getRuntime();
-                        }
-
-                        telemetry.addData("Status", "Detecting");
-                        TensorflowCheck();
-                        if (mineralPos != mineralPosEnum.none){
-                            Runstate = 30;
-                            continue;
-                        } else if (getRuntime() > StartTimeDetection + 5) {
-                            Runstate = 30;
-                            continue;
-                        } else {
-                        }
-                        break;
+                        logUtils.StopLogging(3);
+                        stop();
 
 
-                    case 30:
-                        switch (mineralPos){
-                            case left:
-                                MoveForward(.5f);
-                                sleep(1400);
-                                MoveForward(0);
-                               MoveSideWays(1);
-                                sleep(800);
-                                MoveSideWays(0);
-                                MoveForward(.5f);
-                                sleep(2800);
-                                MoveForward(0);
-                                MoveSideWays(-1);
-                                sleep(800);
-                                MoveSideWays(0);
-                                Runstate = 40;
-                                break;
-                           case right:
-                                MoveForward(.5f);
-                                sleep(1400);
-                                MoveForward(0);
-                                MoveSideWays(-1);
-                                sleep(800);
-                                MoveSideWays(0);
-                                MoveForward(.5f);
-                                sleep(2800);
-                                MoveForward(0);
-                                MoveSideWays(1);
-                                sleep(800);
-                                MoveSideWays(0);
-                                Runstate = 40;
-
-                                break;
-                            case none:
-                                MoveForward(.5f);
-                                sleep(4000);
-                                MoveForward(0);
-                                Runstate = 40;
-                             break;
-                            case center:
-                                MoveForward(.5f);
-                                sleep(4000);
-                                MoveForward(0);
-                                Runstate = 40;
-                                break;
-                        }
-                        break;
-
-
-                    case 40:
-                            tfod.shutdown();
-                        telemetry.addData("Status", "driving to zone");
-                        MoveForward(.5f);
-                        telemetry.addData("Distance", frontDistance.getDistance(DistanceUnit.CM));
-                        if (frontDistance.getDistance(DistanceUnit.CM) > 30){
-                            sleep(100);
-                            telemetry.addData("Distance", frontDistance.getDistance(DistanceUnit.CM));
-                            continue;
-                        }
-                        MoveForward(0);
-
-                        Runstate = 50;
-                        break;
-
-
-                    case 50:
-                        Turn(-1);
-                        if (relativeHeading < 120f)
-                        {
-                            continue;
-
-                        }
-                        Turn(0);
-                        Runstate = 55;
-                        break;
-                    case 55:
-                        BLockBoxOpen();
-                        sleep(1500);
-                        BlockBoxClose();
-                        Runstate = 60;
-                        break;
-                    case 60:
-                        MoveForward(1f);
-                        telemetry.addData("Distance", frontDistance.getDistance(DistanceUnit.CM));
-                        if (frontDistance.getDistance(DistanceUnit.CM) > 30){
-                            sleep(100);
-                            telemetry.addData("Distance", frontDistance.getDistance(DistanceUnit.CM));
-                            continue;
-                        }
-                        MoveForward(0);
-                        Runstate = 70;
-                        break;
                 }
 
             }
         }
 
-        if (tfod != null) {
-            tfod.shutdown();
-        }
-        logUtils.StopLogging(3);
     }
 
     /**
      * Initialize the Vuforia localization engine.
      */
-    private void initVuforia() {
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         */
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-
-        // Loading trackables is not necessary for the Tensor Flow Object Detection engine.
-    }
-
-    /**
-     * Initialize the Tensor Flow Object Detection engine.
-     */
-
-    private void initTfod() {
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-            "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
-
-    }
 
     /**
      * for driving sideways, also called strafing
@@ -400,62 +250,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
     /**
      * used for checking the camera view with Tensorflow
      */
-    public void TensorflowCheck() {
-        if (tfod != null) {
-            // getUpdatedRecognitions() will return null if no new information is available since
-            // the last time that call was made.
-            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
 
-            if (updatedRecognitions != null) {
-                telemetry.addData("# Object Detected", updatedRecognitions.size());
-                if (updatedRecognitions.size() == 3) {
-                    int goldMineralX = -1;
-                    int silverMineral1X = -1;
-                    int silverMineral2X = -1;
-
-                    for (Recognition recognition : updatedRecognitions) {
-                        if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-                            goldMineralX = (int) recognition.getLeft();
-                        } else if (silverMineral1X == -1) {
-                            silverMineral1X = (int) recognition.getLeft();
-                        } else {
-                            silverMineral2X = (int) recognition.getLeft();
-                        }
-                    }
-                    if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
-                        if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
-                            telemetry.addData("Gold Mineral Position", "Left");
-                            mineralPos = mineralPosEnum.left;
-                        } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
-                            telemetry.addData("Gold Mineral Position", "Right");
-                            mineralPos = mineralPosEnum.right;
-                        } else {
-                            telemetry.addData("Gold Mineral Position", "Center");
-                            mineralPos = mineralPosEnum.center;
-                        }
-                    }
-                }
-                else {
-                    mineralPos = mineralPosEnum.none;
-                }
-                //telemetry.update();
-            }
-        }
-    }
-
-    /**
-     * Opens the BlockBox, used for teammaker/game elements
-     */
-    public void BLockBoxOpen () {
-        BlockBoxServo.setPosition(0);
-    }
-
-    /**
-     * Closes the BlockBox, used for teammarker/game elements
-     */
-    public void BlockBoxClose () {
-        BlockBoxServo.setPosition(.3);
-    }
 
 
 }

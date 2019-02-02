@@ -80,6 +80,9 @@ public class ConceptTensorFlowObjectDetectionWebcam2 extends LinearOpMode {
     private float LandedDistance = 15.5f; //TODO: meten startwaarde, gemiddelde pakken vnan een aantal metingen
     private float heading;
     private BNO055IMU imu;
+    public  float yBound;
+    public float Bound2;
+    public float Bound1;
     Acceleration gravity;
     //private DcMotor HijsMotor;
     float startHeading;
@@ -202,7 +205,7 @@ public class ConceptTensorFlowObjectDetectionWebcam2 extends LinearOpMode {
                         Turn(-.25f);
                         sleep(800);
                         Turn(0);
-                        MoveForward(.5f);
+                        MoveForward(-0.5f);
                         sleep(400);
                         MoveForward(0);
                         Runstate = 20;
@@ -214,7 +217,8 @@ public class ConceptTensorFlowObjectDetectionWebcam2 extends LinearOpMode {
                         }
 
                         telemetry.addData("Status", "Detecting");
-                        TensorflowCheck();
+                        telemetry.addData("Leftbound", Bound1);
+                        TensorFlowCheck2();
                         if (mineralPos != mineralPosEnum.none){
                             Runstate = 30;
                             continue;
@@ -227,6 +231,8 @@ public class ConceptTensorFlowObjectDetectionWebcam2 extends LinearOpMode {
 
 
                     case 30:
+                        telemetry.addData("Mineral pos", mineralPos);
+                        telemetry.update();
                         switch (mineralPos){
                             case left:
                                 MoveForward(.5f);
@@ -344,6 +350,10 @@ public class ConceptTensorFlowObjectDetectionWebcam2 extends LinearOpMode {
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
+        Bound1  =  vuforia.getCameraCalibration().getSize().getData()[0]/3;
+        Bound2  = (vuforia.getCameraCalibration().getSize().getData()[0]/3)*2;
+        yBound  =  vuforia.getCameraCalibration().getSize().getData()[1]/2;
+
         // Loading trackables is not necessary for the Tensor Flow Object Detection engine.
     }
 
@@ -399,7 +409,7 @@ public class ConceptTensorFlowObjectDetectionWebcam2 extends LinearOpMode {
      * used for checking the camera view with Tensorflow
      */
     public void TensorflowCheck() {
-        if (tfod != null) {
+        if (tfod != null && vuforia != null) {
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
@@ -456,4 +466,64 @@ public class ConceptTensorFlowObjectDetectionWebcam2 extends LinearOpMode {
     }
 
 
+
+    public void TensorFlowCheck2 () {
+        if (tfod != null && vuforia != null) {
+            // getUpdatedRecognitions() will return null if no new information is available since
+            // the last time that call was made.
+            List<Recognition> updatedRecognitions= tfod.getUpdatedRecognitions();
+            /*List<Recognition> updatedRecognitions = null;
+            for (Recognition a : updatedRecognitions1) {
+                if(a.getTop() > yBound){
+                    updatedRecognitions.add(a);
+                    telemetry.addData("added to the list", a.toString());
+                }
+                telemetry.addData("top", a);
+            }*/
+
+            if (updatedRecognitions != null) {
+                telemetry.addData("# Object Detected", updatedRecognitions.size());
+                if (updatedRecognitions.size() >= 2) {
+                    int goldMineralX = -1;
+                    int silverMineral1X = -1;
+                    int silverMineral2X = -1;
+
+                    for (Recognition recognition : updatedRecognitions) {
+                        if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
+                            goldMineralX = (int) recognition.getLeft();
+                        } else if (silverMineral1X == -1) {
+                            silverMineral1X = (int) recognition.getLeft();
+                        } else {
+                            silverMineral2X = (int) recognition.getLeft();
+                        }
+                    }
+                    for (int i = 0; i < 3; i++) {
+                        if (goldMineralX < Bound1 && goldMineralX != -1) {
+                            mineralPos = mineralPosEnum.left;
+                        } else if (goldMineralX < Bound2) {
+                            mineralPos = mineralPosEnum.center;
+                        } else if (goldMineralX > Bound2) {
+                            mineralPos = mineralPosEnum.right;
+                        } else if (silverMineral1X < Bound1 && silverMineral2X < Bound2 && silverMineral1X != -1) {
+                            mineralPos = mineralPosEnum.right;
+                        } else if (silverMineral2X < Bound1 && silverMineral1X < Bound2 && silverMineral2X != -1) {
+                            mineralPos = mineralPosEnum.right;
+                        } else if (silverMineral1X > Bound1 && silverMineral2X > Bound2) {
+                            mineralPos = mineralPosEnum.left;
+                        } else if (silverMineral2X > Bound1 && silverMineral1X > Bound2) {
+                            mineralPos = mineralPosEnum.left;
+                        } else if (silverMineral1X < Bound1 && silverMineral2X > Bound2 && silverMineral1X != -1) {
+                            mineralPos = mineralPosEnum.center;
+                        } else if (silverMineral2X < Bound1 && silverMineral1X > Bound2 && silverMineral2X != -1) {
+                            mineralPos = mineralPosEnum.center;
+                        }
+
+                    }
+                } else {
+                    mineralPos = mineralPosEnum.none;
+                }
+                //telemetry.update();
+            }
+        }
+    }
 }

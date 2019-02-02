@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -24,13 +27,14 @@ public class DriverOp2 extends OpMode {
     private DcMotor MotorBackRight;
     private DcMotor MotorBackLeft;
     private Servo BlockBoxServo;
+    private CRServo ElementServo1;
+    private CRServo ELementServo2;
     public  boolean IsControlled = true;
     private DcMotor LiftMotor;
     double driveDirectionSpeed = 1 ;
     private ColorSensor testSensor;
     private float x;
     private float y;
-    BNO055IMU imu;
     private String servomessage;
     private boolean isLocked;
 
@@ -43,6 +47,8 @@ public class DriverOp2 extends OpMode {
         MotorFrontRight = hardwareMap.dcMotor.get("MotorFrontRight");
         LiftMotor = hardwareMap.dcMotor.get("LiftMotor");
         BlockBoxServo = hardwareMap.servo.get("BlockBoxServo");
+        ElementServo1 = hardwareMap.crservo.get("ElementServo1");
+        ELementServo2 = hardwareMap.crservo.get("ElementServo2");
 
       //  ArmMotor = hardwareMap.dcMotor.get("ArmMotor");
        // BekServo1 = hardwareMap.servo.get("BekServo1");
@@ -134,6 +140,16 @@ public class DriverOp2 extends OpMode {
             isLocked = false;
         }
 
+        //CRServoChecks element box
+        if(gamepad2.dpad_down){
+            MineralSystemOn();
+        }
+        if(gamepad2.dpad_up){
+            MineralSystemInverted();
+        } if (gamepad2.dpad_right || gamepad2.dpad_left){
+            MineralSystemOff();
+        }
+
     }
 
         public void sidemoving(int speed) {
@@ -156,6 +172,20 @@ public class DriverOp2 extends OpMode {
      */
     public void BlockBoxClose () {
         BlockBoxServo.setPosition(.3);
+    }
+
+    public void MineralSystemOn() {
+        ElementServo1.setPower(1);
+        ELementServo2.setPower(-1);
+    }
+
+    public void MineralSystemInverted(){
+        ElementServo1.setPower(-1);
+        ELementServo2.setPower(1);
+    }
+    public void MineralSystemOff(){
+        ElementServo1.setPower(0);
+        ELementServo2.setPower(0);
     }
 }
 

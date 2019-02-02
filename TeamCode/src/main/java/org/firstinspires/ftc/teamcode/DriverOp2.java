@@ -29,6 +29,7 @@ public class DriverOp2 extends OpMode {
     private DcMotor ArmMotor;
     private Servo BlockBoxServo;
     private Servo ArmServo1;
+    private CRServo ArmServo2;
     public  boolean IsControlled = true;
     private DcMotor LiftMotor;
     double driveDirectionSpeed = 1 ;
@@ -49,6 +50,7 @@ public class DriverOp2 extends OpMode {
         LiftMotor = hardwareMap.dcMotor.get("LiftMotor");
         BlockBoxServo = hardwareMap.servo.get("BlockBoxServo");
         ArmServo1 = hardwareMap.servo.get("ArmServo1");
+        ArmServo2 = hardwareMap.crservo.get("ArmServo2");
         driveDirectionSpeed  = 1;
         try {
             logUtils.StartLogging(1);
@@ -121,18 +123,37 @@ public class DriverOp2 extends OpMode {
         } else {
             LiftMotor.setPower(-gamepad2.left_stick_y);
         }
+        /*if(gamepad2.dpad_up){
+            ArmServo2.setPower(-1);
+        }
+        else if (gamepad2.dpad_down){
+            ArmServo2.setPower(1);
+        } else {
+            ArmServo2.setPower(0);
+        }*/
 
-        ArmMotor.setPower(-gamepad2.right_stick_y);
-        if(gamepad2.a){
+
+        ArmServo2.setPower(0.0001);
+           if (gamepad2.left_bumper){
+               ArmServo2.setPower(-1);
+           }
+
+           if(gamepad2.right_bumper) {
+               ArmServo2.setPower(1);
+           }
+
+
+       ArmMotor.setPower(-0.5*gamepad2.right_stick_y);
+       if(gamepad2.a){
                 isLocked = true;
             }
             if (gamepad2.b){
             isLocked = false;
-        }
+       }
 
         ArmServo1.setPosition(ArmServo1Pos);
-        ArmServo1Pos += 0.1* gamepad2.right_trigger;
-        ArmServo1Pos -= 0.1* gamepad2.left_trigger;
+        ArmServo1Pos += 0.05* gamepad2.right_trigger;
+        ArmServo1Pos -= 0.05* gamepad2.left_trigger;
     }
 
         public void sidemoving(int speed) {

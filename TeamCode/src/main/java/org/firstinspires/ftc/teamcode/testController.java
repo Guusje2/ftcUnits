@@ -172,16 +172,17 @@ public class testController extends OpMode {
     public void TensorFlowCheck2 () {
         if (tfod != null && vuforia != null) {
             // getUpdatedRecognitions() will return null if no new information is available since
-            // the last time that call was made.
-            List<Recognition> updatedRecognitions= tfod.getUpdatedRecognitions();
-            /*List<Recognition> updatedRecognitions = null;
-            for (Recognition a : updatedRecognitions1) {
-                if(a.getTop() > yBound){
-                    updatedRecognitions.add(a);
-                    telemetry.addData("added to the list", a.toString());
+            // the last time that call was made
+            List<Recognition> updatedRecognitions = null;
+            if(tfod.getUpdatedRecognitions != null){
+                for (Recognition a : tfod.getUpdatedRecognitions();) {
+                    if(a.getTop() > yBound){
+                        updatedRecognitions.add(a);
+                        telemetry.addData("added to the list", a.toString());
+                    }
+                    telemetry.addData("top", a);
                 }
-                telemetry.addData("top", a);
-            }*/
+            }
 
             if (updatedRecognitions != null) {
                 telemetry.addData("# Object Detected", updatedRecognitions.size());

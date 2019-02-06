@@ -352,7 +352,7 @@ public class ConceptTensorFlowObjectDetectionWebcam2 extends LinearOpMode {
 
         Bound1  =  vuforia.getCameraCalibration().getSize().getData()[0]/3;
         Bound2  = (vuforia.getCameraCalibration().getSize().getData()[0]/3)*2;
-        yBound  =  vuforia.getCameraCalibration().getSize().getData()[1]/2;
+        yBound  =  vuforia.getCameraCalibration().getSize().getData()[1]/3.2;//TODO: afstellen van deze waarde. kan pas op een veld
 
         // Loading trackables is not necessary for the Tensor Flow Object Detection engine.
     }
@@ -471,9 +471,9 @@ public class ConceptTensorFlowObjectDetectionWebcam2 extends LinearOpMode {
         if (tfod != null && vuforia != null) {
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
-            List<Recognition> updatedRecognitions= tfod.getUpdatedRecognitions();
-            /*List<Recognition> updatedRecognitions = null;
-            for (Recognition a : updatedRecognitions1) {
+            
+            List<Recognition> updatedRecognitions = null;
+            for (Recognition a : tfod.getUpdatedRecognitions();) {
                 if(a.getTop() > yBound){
                     updatedRecognitions.add(a);
                     telemetry.addData("added to the list", a.toString());
@@ -489,7 +489,7 @@ public class ConceptTensorFlowObjectDetectionWebcam2 extends LinearOpMode {
                     int silverMineral2X = -1;
 
                     for (Recognition recognition : updatedRecognitions) {
-                        if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
+                        if (recognition.getLabel().equals(LABEL_GOLD_MINERAL) && ) {
                             goldMineralX = (int) recognition.getLeft();
                         } else if (silverMineral1X == -1) {
                             silverMineral1X = (int) recognition.getLeft();

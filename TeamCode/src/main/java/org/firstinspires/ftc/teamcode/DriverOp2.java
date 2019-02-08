@@ -38,6 +38,7 @@ public class DriverOp2 extends OpMode {
     private float y;
     private String servomessage;
     private boolean isLocked;
+    private float ArmServo2Power = 0;
 
 
     @Override
@@ -123,6 +124,12 @@ public class DriverOp2 extends OpMode {
         } else {
             LiftMotor.setPower(-gamepad2.left_stick_y);
         }
+        if(gamepad2.a){
+             isLocked = true;
+       }
+       if(gamepad2.b){
+            isLocked = false;
+       }
 
     }
 
@@ -134,28 +141,22 @@ public class DriverOp2 extends OpMode {
         }
     
     public void ArmChecks() {
-        ArmServo2.setPower(0.0001);
-           if (gamepad2.left_bumper){
-               ArmServo2.setPower(-1);
-           }
-
-           if(gamepad2.right_bumper) {
-               ArmServo2.setPower(1);
-           }
-
+       
+       if (gamepad2.left_bumper){
+               ArmServo2Power = -1;
+       } else if(gamepad2.right_bumper) {
+               ArmServo2Power = 1;
+       } else {
+           ArmServo2Power = 0;
+       }
+       ArmServo2.setPower(ArmServo2Power);
 
        ArmMotor.setPower(-0.5*gamepad2.right_stick_y);
-       if(gamepad2.a){
-             isLocked = true;
-            }
-       if(gamepad2.b){
-            isLocked = false;
-            }
+       
+       ArmServo1.setPosition(ArmServo1Pos);
+       ArmServo1Pos += 0.05* gamepad2.right_trigger;
+       ArmServo1Pos -= 0.05* gamepad2.left_trigger;
     }
-
-        ArmServo1.setPosition(ArmServo1Pos);
-        ArmServo1Pos += 0.05* gamepad2.right_trigger;
-        ArmServo1Pos -= 0.05* gamepad2.left_trigger;
 
     /**
      * Opens the BlockBox, used for teammaker/game elements
@@ -174,9 +175,3 @@ public class DriverOp2 extends OpMode {
 
 
 }
-
-
-
-
-
-

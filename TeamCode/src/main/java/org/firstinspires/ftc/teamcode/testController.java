@@ -174,8 +174,8 @@ public class testController extends OpMode {
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made
             List<Recognition> updatedRecognitions = null;
-            if(tfod.getUpdatedRecognitions != null){
-                for (Recognition a : tfod.getUpdatedRecognitions();) {
+            if(tfod.getUpdatedRecognitions() != null){
+                for (Recognition a : tfod.getUpdatedRecognitions() ){
                     if(a.getTop() > yBound){
                         updatedRecognitions.add(a);
                         telemetry.addData("added to the list", a.toString());

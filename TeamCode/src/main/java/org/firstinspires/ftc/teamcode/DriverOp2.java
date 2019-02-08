@@ -21,7 +21,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 
 public class DriverOp2 extends OpMode {
 
-    private float ArmServo1Pos = 0;
+    private float ArmServo1Pos = 1;
     private DcMotor MotorFrontRight;
     private DcMotor MotorFrontLeft;
     private DcMotor MotorBackRight;
@@ -144,18 +144,24 @@ public class DriverOp2 extends OpMode {
        
        if (gamepad2.left_bumper){
                ArmServo2Power = -1;
+
        } else if(gamepad2.right_bumper) {
                ArmServo2Power = 1;
        } else {
-           ArmServo2Power = 0;
+           ArmServo2Power = -.1f;
        }
+       telemetry.addData("ArmServo2Power", ArmServo2Power);
        ArmServo2.setPower(ArmServo2Power);
 
        ArmMotor.setPower(-0.5*gamepad2.right_stick_y);
        
        ArmServo1.setPosition(ArmServo1Pos);
-       ArmServo1Pos += 0.05* gamepad2.right_trigger;
-       ArmServo1Pos -= 0.05* gamepad2.left_trigger;
+       if(ArmServo1Pos < 1 ) {
+           ArmServo1Pos += 0.05 * gamepad2.right_trigger;
+       }
+       if(ArmServo1Pos > -1) {
+           ArmServo1Pos -= 0.05 * gamepad2.left_trigger;
+       }
     }
 
     /**
@@ -175,3 +181,4 @@ public class DriverOp2 extends OpMode {
 
 
 }
+

@@ -235,31 +235,31 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                         switch (mineralPos){
                             case left:
                                 MoveForward(.5f);
-                                sleep(1400);
+                                sleep(2300);
                                 MoveForward(0);
                                MoveSideWays(1);
-                                sleep(800);
+                                sleep(700);
                                 MoveSideWays(0);
                                 MoveForward(.5f);
-                                sleep(2800);
+                                sleep(2200);
                                 MoveForward(0);
                                 MoveSideWays(-1);
-                                sleep(800);
+                                sleep(700);
                                 MoveSideWays(0);
                                 Runstate = 40;
                                 break;
                            case right:
                                 MoveForward(.5f);
-                                sleep(1400);
+                                sleep(2300);
                                 MoveForward(0);
                                 MoveSideWays(-1);
-                                sleep(800);
+                                sleep(700);
                                 MoveSideWays(0);
                                 MoveForward(.5f);
-                                sleep(2800);
+                                sleep(2200);
                                 MoveForward(0);
                                 MoveSideWays(1);
-                                sleep(800);
+                                sleep(700);
                                 MoveSideWays(0);
                                 Runstate = 40;
 
@@ -298,7 +298,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
 
                     case 50:
                         Turn(-1);
-                        if (relativeHeading < 120f)
+                        if (relativeHeading < 118   f)
                         {
                             continue;
 
@@ -308,7 +308,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                         break;
                     case 55:
                         BLockBoxOpen();
-                        sleep(1500);
+                        sleep(2000);
                         BlockBoxClose();
                         Runstate = 60;
                         break;

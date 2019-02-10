@@ -30,6 +30,7 @@ public class DriverOp2 extends OpMode {
     private Servo BlockBoxServo;
     private Servo ArmServo1;
     private CRServo ArmServo2;
+    private Servo ArmServo3;
     public  boolean IsControlled = true;
     private DcMotor LiftMotor;
     double driveDirectionSpeed = 1 ;
@@ -39,7 +40,7 @@ public class DriverOp2 extends OpMode {
     private String servomessage;
     private boolean isLocked;
     private float ArmServo2Power = 0;
-
+    private float ArmServo3Pos;
 
     @Override
     public void init() {
@@ -47,12 +48,15 @@ public class DriverOp2 extends OpMode {
         MotorBackRight  = hardwareMap.dcMotor.get("MotorBackRight");
         MotorFrontLeft  = hardwareMap.dcMotor.get("MotorFrontLeft");
         MotorFrontRight = hardwareMap.dcMotor.get("MotorFrontRight");
-        ArmMotor = hardwareMap.dcMotor.get("ArmMotor");
+        //ArmMotor = hardwareMap.dcMotor.get("ArmMotor");
         LiftMotor = hardwareMap.dcMotor.get("LiftMotor");
         BlockBoxServo = hardwareMap.servo.get("BlockBoxServo");
         ArmServo1 = hardwareMap.servo.get("ArmServo1");
         ArmServo2 = hardwareMap.crservo.get("ArmServo2");
+        ArmServo3 = hardwareMap.servo.get("ArmServo3");
+
         driveDirectionSpeed  = 1;
+
         try {
             logUtils.StartLogging(1);
         } catch (Exception e) {
@@ -153,8 +157,8 @@ public class DriverOp2 extends OpMode {
        telemetry.addData("ArmServo2Power", ArmServo2Power);
        ArmServo2.setPower(ArmServo2Power);
 
-       ArmMotor.setPower(-0.5*gamepad2.right_stick_y);
-       
+       //ArmMotor.setPower(-0.5*gamepad2.right_stick_y);
+
        ArmServo1.setPosition(ArmServo1Pos);
        if(ArmServo1Pos < 1 ) {
            ArmServo1Pos += 0.05 * gamepad2.right_trigger;
@@ -162,6 +166,9 @@ public class DriverOp2 extends OpMode {
        if(ArmServo1Pos > -1) {
            ArmServo1Pos -= 0.05 * gamepad2.left_trigger;
        }
+       ArmServo3Pos += gamepad2.right_stick_y * 0.05;
+        ArmServo3.setPosition(ArmServo3Pos);
+       telemetry.addData("ArmServo3Pos", ArmServo3Pos);
     }
 
     /**

@@ -194,8 +194,8 @@ public class CraterSide extends LinearOpMode {
                         break;
 
                     case 15:
-                        MoveForward(.5f);
-                        sleep(3000);
+                        MoveForward(1f);
+                        sleep(5000);
                         MoveForward(0);
                         logUtils.StopLogging(3);
                         stop();

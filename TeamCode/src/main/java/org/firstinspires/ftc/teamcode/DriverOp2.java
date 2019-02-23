@@ -21,7 +21,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 
 public class DriverOp2 extends OpMode {
 
-    private float ArmServo1Pos = 0;
+    private float ArmServo1Pos = 1;
     private DcMotor MotorFrontRight;
     private DcMotor MotorFrontLeft;
     private DcMotor MotorBackRight;
@@ -38,6 +38,7 @@ public class DriverOp2 extends OpMode {
     private float y;
     private String servomessage;
     private boolean isLocked;
+    private float ArmServo2Power = 0;
 
 
     @Override
@@ -66,7 +67,7 @@ public class DriverOp2 extends OpMode {
 
         SpeedChecks();
         DriveChecks();
-
+        ArmChecks();
 
     }
 
@@ -123,37 +124,13 @@ public class DriverOp2 extends OpMode {
         } else {
             LiftMotor.setPower(-gamepad2.left_stick_y);
         }
-        /*if(gamepad2.dpad_up){
-            ArmServo2.setPower(-1);
-        }
-        else if (gamepad2.dpad_down){
-            ArmServo2.setPower(1);
-        } else {
-            ArmServo2.setPower(0);
-        }*/
-
-
-        ArmServo2.setPower(0.0001);
-           if (gamepad2.left_bumper){
-               ArmServo2.setPower(-1);
-           }
-
-           if(gamepad2.right_bumper) {
-               ArmServo2.setPower(1);
-           }
-
-
-       ArmMotor.setPower(-0.5*gamepad2.right_stick_y);
-       if(gamepad2.a){
-                isLocked = true;
-            }
-            if (gamepad2.b){
+        if(gamepad2.a){
+             isLocked = true;
+       }
+       if(gamepad2.b){
             isLocked = false;
        }
 
-        ArmServo1.setPosition(ArmServo1Pos);
-        ArmServo1Pos += 0.05* gamepad2.right_trigger;
-        ArmServo1Pos -= 0.05* gamepad2.left_trigger;
     }
 
         public void sidemoving(int speed) {
@@ -162,6 +139,30 @@ public class DriverOp2 extends OpMode {
             MotorBackRight.setPower(-speed);
             MotorFrontRight.setPower(speed);
         }
+    
+    public void ArmChecks() {
+       
+       if (gamepad2.left_bumper){
+               ArmServo2Power = -1;
+
+       } else if(gamepad2.right_bumper) {
+               ArmServo2Power = 1;
+       } else {
+           ArmServo2Power = -.1f;
+       }
+       telemetry.addData("ArmServo2Power", ArmServo2Power);
+       ArmServo2.setPower(ArmServo2Power);
+
+       ArmMotor.setPower(-0.5*gamepad2.right_stick_y);
+       
+       ArmServo1.setPosition(ArmServo1Pos);
+       if(ArmServo1Pos < 1 ) {
+           ArmServo1Pos += 0.05 * gamepad2.right_trigger;
+       }
+       if(ArmServo1Pos > -1) {
+           ArmServo1Pos -= 0.05 * gamepad2.left_trigger;
+       }
+    }
 
     /**
      * Opens the BlockBox, used for teammaker/game elements
@@ -180,9 +181,4 @@ public class DriverOp2 extends OpMode {
 
 
 }
-
-
-
-
-
 

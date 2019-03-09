@@ -103,7 +103,6 @@ public class GuusAutonoomTest extends LinearOpMode {
             BlockBoxServo = hardwareMap.servo.get("BlockBoxServo");
             Runstate = 0;
             HijsMotor = hardwareMap.dcMotor.get("LiftMotor");
-            HijsMotor.setPower(-.5);
             frontDistance = hardwareMap.get(Rev2mDistanceSensor.class, "front");
             bottomDistance = hardwareMap.get(Rev2mDistanceSensor.class, "bottom");
             driveTrainMecanum = new DriveTrainMecanum(MotorBackLeft,MotorBackRight,MotorFrontLeft,MotorFrontRight,imu);
@@ -115,7 +114,7 @@ public class GuusAutonoomTest extends LinearOpMode {
             waitForStart();
 
             if (opModeIsActive()) {
-                driveTrainMecanum.DriveForwardCorrection(10, 0.5f);
+                driveTrainMecanum.DriveForwardCorrection(30, -0.5f);
 
 
 

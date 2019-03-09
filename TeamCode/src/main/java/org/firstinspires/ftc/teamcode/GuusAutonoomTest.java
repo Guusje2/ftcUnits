@@ -115,7 +115,7 @@ public class GuusAutonoomTest extends LinearOpMode {
             waitForStart();
 
             if (opModeIsActive()) {
-                driveTrainMecanum.DriveForwardCorrection(10, 0.75f);
+                driveTrainMecanum.DriveForwardCorrection(10, 0.5f);
 
 
 
@@ -171,4 +171,4 @@ public class GuusAutonoomTest extends LinearOpMode {
 
     }
 
-}
+

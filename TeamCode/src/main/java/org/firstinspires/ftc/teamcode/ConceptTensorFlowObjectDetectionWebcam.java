@@ -298,7 +298,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
 
                     case 50:
                         Turn(-1);
-                        if (relativeHeading < 118   f)
+                        if (relativeHeading < 118f)
                         {
                             continue;
 

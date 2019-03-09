@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-@TeleOp(name = "MeikeRijden", group = "Meike")
+@TeleOp(name = "MeikeDriver", group = "Meike")
 public class MeikeDriver extends OpMode {
 
     DcMotor FrontRight;
@@ -22,7 +22,7 @@ public class MeikeDriver extends OpMode {
     @Override
     public void init() {
         FrontRight = hardwareMap.dcMotor.get("MotorFrontRight");
-        FrontLeft = hardwareMap.dcMotor.get("MoterFrontLeft");
+        FrontLeft = hardwareMap.dcMotor.get("MotorFrontLeft");
         BackRight = hardwareMap.dcMotor.get("MotorBackRight");
         BackLeft = hardwareMap.dcMotor.get("MotorBackLeft");
     }

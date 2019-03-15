@@ -112,13 +112,7 @@ public class GuusAutonoomTest extends LinearOpMode {
             telemetry.addData(">", "Press Play to start tracking");
             telemetry.update();
             waitForStart();
-
-            if (opModeIsActive()) {
-                driveTrainMecanum.DriveForwardCorrection(30, -0.5f);
-
-
-
-            }
+            driveTrainMecanum.DriveForwardCorrection(30, -0.5f);
 
         }
 

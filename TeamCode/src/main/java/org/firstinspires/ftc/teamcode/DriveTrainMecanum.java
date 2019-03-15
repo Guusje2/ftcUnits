@@ -34,7 +34,7 @@ public class DriveTrainMecanum {
         double right = 0;
         double correction;
         while (java.lang.System.currentTimeMillis() < endTime){
-            correction = (startAngle + imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle)*0.75;
+            correction = (startAngle - imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle)*-0.75;
             right = Speed + correction;
             left = (Speed + correction)*-1;
             MotorFrontRight.setPower(right);

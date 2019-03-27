@@ -16,6 +16,7 @@ public class MeikeDriver extends OpMode {
 
     @Override
     public void loop() {
+        //TODO: toevoegen controller input. misschien zal je daarvoor wel deze functie opnieuw moeten doen, of een ander systeem dan de standaard bedenken
         DriveForwardBackward(1);
     }
 

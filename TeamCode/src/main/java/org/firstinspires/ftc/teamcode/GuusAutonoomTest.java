@@ -113,6 +113,10 @@ public class GuusAutonoomTest extends LinearOpMode {
             telemetry.update();
             waitForStart();
             driveTrainMecanum.DriveForwardCorrection(30, -0.5f);
+            telemetry.addData(">", "Finished correction drive");
+            telemetry.update();
+            sleep(4000);
+
 
         }
 

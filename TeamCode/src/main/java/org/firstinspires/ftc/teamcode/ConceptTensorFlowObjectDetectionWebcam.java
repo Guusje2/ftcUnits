@@ -209,7 +209,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                         MoveForward(-0.5f);
                         sleep(400);
                         MoveForward(0);
-                        Runstate = 20;
+                        Runstate = 30;
                         break;
 
                     case 20:

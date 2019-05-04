@@ -41,6 +41,8 @@ public class DriverOp2 extends OpMode {
     private boolean isLocked;
     private float ArmServo2Power = 0;
     private float ArmServo3Pos;
+    private double startTimeLock;
+
 
     @Override
     public void init() {
@@ -124,12 +126,16 @@ public class DriverOp2 extends OpMode {
             sidemoving(-1);
         }
         if (isLocked){
+            if (startTimeLock + 20 < getRuntime()){
+                isLocked = false;
+            }
             LiftMotor.setPower(-.5);
         } else {
             LiftMotor.setPower(-gamepad2.left_stick_y);
         }
         if(gamepad2.a){
              isLocked = true;
+             startTimeLock = getRuntime();
        }
        if(gamepad2.b){
             isLocked = false;

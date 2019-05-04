@@ -200,6 +200,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                         sleep(150);
                         MoveSideWays(0);
                         Runstate = 15;
+
                         break;
 
                     case 15:
@@ -209,7 +210,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                         MoveForward(-0.5f);
                         sleep(400);
                         MoveForward(0);
-                        Runstate = 30;
+                        Runstate = 20;
                         break;
 
                     case 20:
@@ -223,7 +224,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                         if (mineralPos != mineralPosEnum.none){
                             Runstate = 30;
                             continue;
-                        } else if (getRuntime() > StartTimeDetection + 5) {
+                        } else if (getRuntime() > StartTimeDetection + 3) {
                             Runstate = 30;
                             continue;
                         } else {
@@ -283,6 +284,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                     case 40:
                             tfod.shutdown();
                         telemetry.addData("Status", "driving to zone");
+                        telemetry.update();
                         MoveForward(.5f);
                         telemetry.addData("Distance", frontDistance.getDistance(DistanceUnit.CM));
                         if (frontDistance.getDistance(DistanceUnit.CM) > 30){
@@ -292,7 +294,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                         }
                         MoveForward(0);
 
-                        Runstate = 50;
+                        Runstate = 80;
                         break;
 
 

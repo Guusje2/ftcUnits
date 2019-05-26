@@ -177,6 +177,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                 telemetry.update();
                 switch (Runstate){
                     case 0:
+                        //dropping
                         telemetry.addData("Status", "Hanging");
                         HijsMotor.setPower(0);
                         if(bottomDistance.getDistance(DistanceUnit.CM) > 17){
@@ -188,6 +189,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
 
 
                     case 10:
+                        //detaching from hook
                         telemetry.addData("Status", "Dropping");
                         sleep(200);
                         MoveSideWays(-1);
@@ -204,6 +206,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                         break;
 
                     case 15:
+                        //position the robot against the lander
                         Turn(-.25f);
                         sleep(800);
                         Turn(0);
@@ -214,7 +217,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                         break;
 
                     case 20:
-
+                        //tensorflow detection including a max detection time
                         if (StartTimeDetection == 0){
                             StartTimeDetection = getRuntime();
                         }
@@ -231,7 +234,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                         }
                         break;
 
-
+                    //driving based on the mineral position
                     case 30:
                         switch (mineralPos){
                             case left:
@@ -282,7 +285,8 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
 
 
                     case 40:
-                            tfod.shutdown();
+                        //shutting down tensorflow
+                        tfod.shutdown();
                         telemetry.addData("Status", "driving to zone");
                         telemetry.update();
                         MoveForward(.5f);
@@ -299,6 +303,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
 
 
                     case 50:
+                        //turning to the other crater with the encoder
                         Turn(-1);
                         if (relativeHeading < 118f)
                         {
@@ -309,12 +314,14 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                         Runstate = 55;
                         break;
                     case 55:
+                        //opening the blockbox
                         BLockBoxOpen();
                         sleep(2000);
                         BlockBoxClose();
                         Runstate = 60;
                         break;
                     case 60:
+                        //moving to the crater edge with distance sensor
                         MoveForward(1f);
                         telemetry.addData("Distance", frontDistance.getDistance(DistanceUnit.CM));
                         if (frontDistance.getDistance(DistanceUnit.CM) > 30){
@@ -406,21 +413,14 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
     }
 
     /**
-     * used for checking the camera view with Tensorflow
+     * used for checking the camera view with Tensorflow, and determine the position of the gold element
      */
     public void TensorFlowCheck2 () {
         if (tfod != null && vuforia != null) {
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
             List<Recognition> updatedRecognitions= tfod.getUpdatedRecognitions();
-            /*List<Recognition> updatedRecognitions = null;
-            for (Recognition a : updatedRecognitions1) {
-                if(a.getTop() > yBound){
-                    updatedRecognitions.add(a);
-                    telemetry.addData("added to the list", a.toString());
-                }
-                telemetry.addData("top", a);
-            }*/
+
 
             if (updatedRecognitions != null) {
                 telemetry.addData("# Object Detected", updatedRecognitions.size());

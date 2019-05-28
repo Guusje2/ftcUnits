@@ -7,5 +7,9 @@ public class Gridsquare {
     public int Y;
     /** pathfinding weight, higher means less likely to be chosen */
     public int weight;
+}
 
+public class Edge {
+  public Gridsquare 1;
+  public Gridsquare 2;
 }

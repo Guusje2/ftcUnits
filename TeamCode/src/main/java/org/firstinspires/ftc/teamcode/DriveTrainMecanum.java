@@ -7,8 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-
-import java.sql.Time;
+import org.firstinspires.ftc.teamcode.MathEssentials.MathFunctions;
 
 // A four-wheeled drivetrain, for autonomous programming
 public class DriveTrainMecanum {
@@ -18,6 +17,7 @@ public class DriveTrainMecanum {
     public DcMotor MotorFrontRight;
     public BNO055IMU imu;
 
+
     public DriveTrainMecanum (DcMotor _MotorBackLeft, DcMotor _MotorBackRight, DcMotor _MotorFrontLeft, DcMotor _MotorFrontRight, BNO055IMU _imu) {
         MotorBackLeft = _MotorBackLeft;
         MotorBackRight = _MotorBackRight;
@@ -26,6 +26,11 @@ public class DriveTrainMecanum {
         imu = _imu;
     }
 
+    /**
+     * Drives forward (or backward) whilst holding the current angle for a set time
+     * @param timeSeconds time in seconds to drive forward
+     * @param Speed movement speed
+     */
     public void DriveForwardCorrection (float timeSeconds, float Speed)
     {
         float startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
@@ -42,7 +47,29 @@ public class DriveTrainMecanum {
             MotorFrontLeft.setPower(left);
             MotorBackLeft.setPower(left);
         }
+    }
 
-
+    /**
+     * Turns the robot to a specific angle
+     * @param angle angle to turn to
+     * @param speed speed to turn with
+     * @param precision the precision of the angle turned to. This is used in the Ish function, as a value range in which the angle should be
+     */
+    public void TurnToAngle (double angle, double speed, double precision) {
+        while (!MathFunctions.Ish(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle,precision, MathFunctions.FixAngle( angle))) {
+            //calculate the delta
+            double delta = MathFunctions.FixAngle(MathFunctions.FixAngle(angle) - imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+            if (delta < 0) {
+                MotorBackLeft.setPower(-speed);
+                MotorFrontLeft.setPower(-speed);
+                MotorFrontRight.setPower(speed);
+                MotorBackRight.setPower(speed);
+            } else {
+                MotorBackLeft.setPower(speed);
+                MotorFrontLeft.setPower(speed);
+                MotorFrontRight.setPower(-speed);
+                MotorBackRight.setPower(-speed);
+            }
+        }
     }
 }

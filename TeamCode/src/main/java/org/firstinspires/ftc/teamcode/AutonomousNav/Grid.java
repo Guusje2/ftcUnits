@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.AutonomousNav;
 
+import org.firstinspires.ftc.teamcode.MathEssentials.Vector2;
+
 import java.util.ArrayList;
 import java.util.Dictionary;
 
@@ -7,7 +9,9 @@ public class Grid {
     public Dictionary<Vector2, Gridsquare> grid;
 
 
-    /** gets the neighbours of a gridsquare */
+    /**
+     * gets the neighbours of a gridsquare */
+
     public Gridsquare[] GetNeighbours (Gridsquare a) {
         ArrayList<Gridsquare> b = new ArrayList<Gridsquare>();
         for (int x = a.X -1; x < a.X + 2; x++ ){

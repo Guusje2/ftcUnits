@@ -75,7 +75,7 @@ public class DriveTrainMecanum {
             dashboard.sendTelemetryPacket(packet);
             if (delta < 0) {
                 MotorBackLeft.setPower(speed);
-                MotorFrontLeft.setPower(speed);z
+                MotorFrontLeft.setPower(speed);
                 MotorFrontRight.setPower(speed);
                 MotorBackRight.setPower(speed);
             } else {

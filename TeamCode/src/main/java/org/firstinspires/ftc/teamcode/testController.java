@@ -34,12 +34,13 @@ public class testController extends OpMode {
 
     @Override
     public void init() {
-        a = new DriveTrainMecanum(hardwareMap.dcMotor.get("MotorBackLeft"), hardwareMap.dcMotor.get("MotorBackRight"), hardwareMap.dcMotor.get("MotorFrontLeft"), hardwareMap.dcMotor.get("MotorFrontRight"), hardwareMap.get(BNO055IMU.class, "imu") );
-        a.MotorBackRight = hardwareMap.dcMotor.get("MotorBackRight");
-        a.MotorFrontRight = hardwareMap.dcMotor.get("MotorFrontRight");
-        a.MotorFrontLeft = hardwareMap.dcMotor.get("MotorFrontLeft");
-        a.MotorBackLeft = hardwareMap.dcMotor.get("MotorBackLeft");
-        a.imu = hardwareMap.get(BNO055IMU.class, "imu");
+        a = new DriveTrainMecanum(
+                hardwareMap.dcMotor.get("MotorBackLeft"),
+                hardwareMap.dcMotor.get("MotorBackRight"),
+                hardwareMap.dcMotor.get("MotorFrontLeft"),
+                hardwareMap.dcMotor.get("MotorFrontRight"),
+                hardwareMap.get(BNO055IMU.class, "imu")
+        );
 
         a.TurnToAngle(90,1,0.25);
     }

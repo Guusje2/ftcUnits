@@ -42,7 +42,8 @@ public class testController extends OpMode {
                 hardwareMap.get(BNO055IMU.class, "imu")
         );
 
-        a.TurnToAngle(90,1,0.25);
+        a.MoveSideWaySeconds(1,2);
+       // a.TurnToAngle(90,1,0.25);
     }
 
     @Override

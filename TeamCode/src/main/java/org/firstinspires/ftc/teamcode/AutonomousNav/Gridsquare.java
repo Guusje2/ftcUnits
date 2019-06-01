@@ -9,7 +9,8 @@ public class Gridsquare {
     public int weight;
 }
 
-public class Edge {
-  public Gridsquare 1;
-  public Gridsquare 2;
-}
+//TODO: maak een apart bestand voor de edge klasse
+/*public class Edge {
+    public Gridsquare a;
+    public Gridsquare b;
+} */

@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -15,6 +17,7 @@ public class DriveTrainMecanum {
     public DcMotor MotorBackRight;
     public DcMotor MotorFrontLeft;
     public DcMotor MotorFrontRight;
+    public FtcDashboard dashboard;
     public BNO055IMU imu;
 
 
@@ -24,6 +27,12 @@ public class DriveTrainMecanum {
         MotorFrontLeft = _MotorFrontLeft;
         MotorFrontRight = _MotorFrontRight;
         imu = _imu;
+
+        try {
+            dashboard = FtcDashboard.getInstance();
+        } catch (Exception e) {
+
+        }
     }
 
     /**
@@ -57,16 +66,21 @@ public class DriveTrainMecanum {
      */
     public void TurnToAngle (double angle, double speed, double precision) {
         while (!MathFunctions.Ish(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle,precision, MathFunctions.FixAngle( angle))) {
-            //calculate the delta
+            //calculate the delta and send it to the dashboard
             double delta = MathFunctions.FixAngle(MathFunctions.FixAngle(angle) - imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+            TelemetryPacket packet = new TelemetryPacket();
+            packet.put("Angle Delta TurnToAngle", delta);
+            packet.put("Current Angle", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+
+            dashboard.sendTelemetryPacket(packet);
             if (delta < 0) {
-                MotorBackLeft.setPower(-speed);
-                MotorFrontLeft.setPower(-speed);
+                MotorBackLeft.setPower(speed);
+                MotorFrontLeft.setPower(speed);z
                 MotorFrontRight.setPower(speed);
                 MotorBackRight.setPower(speed);
             } else {
-                MotorBackLeft.setPower(speed);
-                MotorFrontLeft.setPower(speed);
+                MotorBackLeft.setPower(-speed);
+                MotorFrontLeft.setPower(-speed);
                 MotorFrontRight.setPower(-speed);
                 MotorBackRight.setPower(-speed);
             }

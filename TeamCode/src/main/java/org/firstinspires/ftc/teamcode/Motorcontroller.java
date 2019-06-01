@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Created by guusd on 9/23/2017.
  * FTC 2017, FTCunits
  * Basis motor controller, nog niet af
+ * EERSTE OPMODE FTCUNITS
  */
 
 @TeleOp(name = "GuusTest", group = "Guus")
@@ -34,10 +35,7 @@ public class Motorcontroller extends OpMode {
         MotorBackRight = hardwareMap.dcMotor.get("MotorBackRight");
         MotorFrontLeft = hardwareMap.dcMotor.get("MotorFrontLeft");
         MotorFrontRight = hardwareMap.dcMotor.get("MotorFrontRight");
-        Servo1 = hardwareMap.servo.get("Servo1");
-
-
-
+        //Servo1 = hardwareMap.servo.get("Servo1");
     }
 
     @Override
@@ -53,15 +51,10 @@ public class Motorcontroller extends OpMode {
 
 
     void  DriveChecks () {
-
-
-
         MotorBackLeft.setPower(gamepad1.left_stick_y);
         MotorFrontLeft.setPower(gamepad1.left_stick_y);
         MotorBackRight.setPower(-gamepad1.right_stick_y);
         MotorFrontRight.setPower(-gamepad1.right_stick_y);
-
-
     }
 
     void ArmChecks () {

@@ -86,4 +86,20 @@ public class DriveTrainMecanum {
             }
         }
     }
+
+    /**
+     * this lets the robot moves to the right
+     * @param _speed if positive, moves to the right. keep between 1 and -1
+     * @param _timeSeconds how long the function is
+     */
+    public void MoveSideWaySeconds(double _speed, double _timeSeconds){
+        double starttime = java.lang.System.currentTimeMillis();
+        while (java.lang.System.currentTimeMillis()<starttime+_timeSeconds){
+            MotorFrontLeft.setPower(_speed);
+            MotorBackLeft.setPower(-_speed);
+            MotorFrontRight.setPower(_speed);
+            MotorBackRight.setPower(-_speed);
+        }
+    }
+
 }

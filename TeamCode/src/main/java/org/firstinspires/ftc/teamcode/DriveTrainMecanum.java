@@ -4,6 +4,8 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -17,6 +19,7 @@ public class DriveTrainMecanum {
     public DcMotor MotorBackRight;
     public DcMotor MotorFrontLeft;
     public DcMotor MotorFrontRight;
+    public LinearOpMode opMode;
     public FtcDashboard dashboard;
     public BNO055IMU imu;
 
@@ -43,11 +46,11 @@ public class DriveTrainMecanum {
     public void DriveForwardCorrection (float timeSeconds, float Speed)
     {
         float startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-        double endTime = java.lang.System.currentTimeMillis() + (timeSeconds*1000);
+        double endTime = System.currentTimeMillis() + (timeSeconds*1000);
         double left = 0;
         double right = 0;
         double correction;
-        while (java.lang.System.currentTimeMillis() < endTime){
+        while (System.currentTimeMillis() < endTime && opMode.opModeIsActive()){
             correction = (startAngle - imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle)*-0.25;
             right = Speed + correction;
             left = (Speed - correction)*-1;
@@ -65,7 +68,7 @@ public class DriveTrainMecanum {
      * @param precision the precision of the angle turned to. This is used in the Ish function, as a value range in which the angle should be
      */
     public void TurnToAngle (double angle, double speed, double precision) {
-        while (!MathFunctions.Ish(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle,precision, MathFunctions.FixAngle( angle))) {
+        while (!MathFunctions.Ish(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle,precision, MathFunctions.FixAngle( angle)) && opMode.opModeIsActive()) {
             //calculate the delta and send it to the dashboard
             double delta = MathFunctions.FixAngle(MathFunctions.FixAngle(angle) - imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
             TelemetryPacket packet = new TelemetryPacket();
@@ -94,7 +97,7 @@ public class DriveTrainMecanum {
      */
     public void MoveSideWaySeconds(double _speed, double _timeSeconds){
         double starttime = java.lang.System.currentTimeMillis();
-        while (java.lang.System.currentTimeMillis()<starttime+_timeSeconds){
+        while (java.lang.System.currentTimeMillis() < starttime+_timeSeconds && opMode.opModeIsActive()){
             MotorFrontLeft.setPower(_speed);
             MotorBackLeft.setPower(-_speed);
             MotorFrontRight.setPower(_speed);

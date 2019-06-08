@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -28,12 +30,12 @@ import java.util.List;
 
 @TeleOp(name = "TestController", group = "Guus")
 
-public class testController extends OpMode {
+public class testController extends LinearOpMode {
 
     public DriveTrainMecanum a;
 
-    @Override
-    public void init() {
+
+    public void runOpMode() {
         a = new DriveTrainMecanum(
                 hardwareMap.dcMotor.get("MotorBackLeft"),
                 hardwareMap.dcMotor.get("MotorBackRight"),
@@ -42,12 +44,18 @@ public class testController extends OpMode {
                 hardwareMap.get(BNO055IMU.class, "imu")
         );
 
+        a.opMode = this;
+        TelemetryPacket b = new TelemetryPacket();
+        b.put("Status","Waiting");
+        a.dashboard.sendTelemetryPacket(b);
+        waitForStart();
+        TelemetryPacket c = new TelemetryPacket();
+        c.put("Status","MoveSideways");
+        a.dashboard.sendTelemetryPacket(c);
         a.MoveSideWaySeconds(1,2);
-       // a.TurnToAngle(90,1,0.25);
+        a.TurnToAngle(90,1,0.25);
     }
 
-    @Override
-    public void loop() {
 
-    }
+
 }

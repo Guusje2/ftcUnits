@@ -52,8 +52,9 @@ public class testController extends LinearOpMode {
         TelemetryPacket c = new TelemetryPacket();
         c.put("Status","MoveSideways");
         a.dashboard.sendTelemetryPacket(c);
-        a.MoveSideWaySeconds(1,2);
-        a.TurnToAngle(90,1,0.25);
+        a.MoveSideWaySeconds(1,5);
+        a.TurnToAngle(90,.45,0.25);
+        //a.DriveForwardCorrection(3, .5f);
     }
 
 

@@ -24,7 +24,7 @@ public class DriveTrainMecanum {
     public BNO055IMU imu;
 
 
-    public DriveTrainMecanum (DcMotor _MotorBackLeft, DcMotor _MotorBackRight, DcMotor _MotorFrontLeft, DcMotor _MotorFrontRight, BNO055IMU _imu) {
+    public  DriveTrainMecanum (DcMotor _MotorBackLeft, DcMotor _MotorBackRight, DcMotor _MotorFrontLeft, DcMotor _MotorFrontRight, BNO055IMU _imu) {
         MotorBackLeft = _MotorBackLeft;
         MotorBackRight = _MotorBackRight;
         MotorFrontLeft = _MotorFrontLeft;
@@ -38,6 +38,14 @@ public class DriveTrainMecanum {
         }
     }
 
+    public DriveTrainMecanum(){
+        MotorBackLeft = null;
+        MotorFrontLeft = null;
+        MotorFrontRight = null;
+        MotorBackRight = null;
+        imu = null;
+    }
+
     /**
      * Drives forward (or backward) whilst holding the current angle for a set time
      * @param timeSeconds time in seconds to drive forward
@@ -45,13 +53,13 @@ public class DriveTrainMecanum {
      */
     public void DriveForwardCorrection (float timeSeconds, float Speed)
     {
-        float startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        float startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
         double endTime = System.currentTimeMillis() + (timeSeconds*1000);
         double left = 0;
         double right = 0;
         double correction;
         while (System.currentTimeMillis() < endTime && opMode.opModeIsActive()){
-            correction = (startAngle - imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle)*-0.25;
+            correction = (startAngle - imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle)*-0.1;
             right = Speed + correction;
             left = (Speed - correction)*-1;
             MotorFrontRight.setPower(right);
@@ -68,24 +76,25 @@ public class DriveTrainMecanum {
      * @param precision the precision of the angle turned to. This is used in the Ish function, as a value range in which the angle should be
      */
     public void TurnToAngle (double angle, double speed, double precision) {
-        while (!MathFunctions.Ish(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle,precision, MathFunctions.FixAngle( angle)) && opMode.opModeIsActive()) {
+        while (!MathFunctions.Ish(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle,precision, MathFunctions.FixAngle( angle)) && opMode.opModeIsActive()) {
             //calculate the delta and send it to the dashboard
-            double delta = MathFunctions.FixAngle(MathFunctions.FixAngle(angle) - imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+            double delta = angle - imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
             TelemetryPacket packet = new TelemetryPacket();
             packet.put("Angle Delta TurnToAngle", delta);
-            packet.put("Current Angle", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+            packet.put("Current Angle", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle);
 
+            imu.getAngularVelocity().unit = AngleUnit.DEGREES;
             dashboard.sendTelemetryPacket(packet);
-            if (delta < 0) {
-                MotorBackLeft.setPower(speed);
-                MotorFrontLeft.setPower(speed);
-                MotorFrontRight.setPower(speed);
-                MotorBackRight.setPower(speed);
+            if (delta > 0) {
+                MotorBackLeft.setPower(speed*(Math.abs(delta/22.5)) + -0.005* imu.getAngularVelocity().zRotationRate);
+                MotorFrontLeft.setPower(speed*(Math.abs(delta/22.5))+ -0.005* imu.getAngularVelocity().zRotationRate);
+                MotorFrontRight.setPower(speed*(Math.abs(delta/22.5))+ -0.005* imu.getAngularVelocity().zRotationRate);
+                MotorBackRight.setPower(speed*(Math.abs(delta/22.5))+ -0.005* imu.getAngularVelocity().zRotationRate);
             } else {
-                MotorBackLeft.setPower(-speed);
-                MotorFrontLeft.setPower(-speed);
-                MotorFrontRight.setPower(-speed);
-                MotorBackRight.setPower(-speed);
+                MotorBackLeft.setPower(-speed*(Math.abs(delta/22.5))- -0.005* imu.getAngularVelocity().zRotationRate);
+                MotorFrontLeft.setPower(-speed*(Math.abs(delta/22.5))- -0.005* imu.getAngularVelocity().zRotationRate);
+                MotorFrontRight.setPower(-speed*(Math.abs(delta/22.5))- -0.005* imu.getAngularVelocity().zRotationRate);
+                MotorBackRight.setPower(-speed*(Math.abs(delta/22.5)) - -0.005* imu.getAngularVelocity().zRotationRate);
             }
         }
     }

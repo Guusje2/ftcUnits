@@ -1,26 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.ValueProvider;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import java.util.Calendar;
 
-import java.util.List;
+import static org.firstinspires.ftc.teamcode.RobotConstants.*;
 
 /**
  * Created by guusd on 9/23/2017.
@@ -32,28 +20,54 @@ import java.util.List;
 
 public class testController extends LinearOpMode {
 
-    public DriveTrainMecanum a;
-
+    public DriveTrainMecanumEncoder a;
+    logUtils e = new logUtils();
 
     public void runOpMode() {
-        a = new DriveTrainMecanum(
+        a = new DriveTrainMecanumEncoder(
                 hardwareMap.dcMotor.get("MotorBackLeft"),
                 hardwareMap.dcMotor.get("MotorBackRight"),
                 hardwareMap.dcMotor.get("MotorFrontLeft"),
                 hardwareMap.dcMotor.get("MotorFrontRight"),
                 hardwareMap.get(BNO055IMU.class, "imu")
         );
-
+        //a.dashboard.addConfigVariable("Odometry", "mmPerPulse",
         a.opMode = this;
         TelemetryPacket b = new TelemetryPacket();
         b.put("Status","Waiting");
         a.dashboard.sendTelemetryPacket(b);
         waitForStart();
-        TelemetryPacket c = new TelemetryPacket();
-        c.put("Status","MoveSideways");
-        a.dashboard.sendTelemetryPacket(c);
-        a.MoveSideWaySeconds(1,5);
-        a.TurnToAngle(90,.45,0.25);
+        try {
+            logUtils.Log(logUtils.logType.normal,"Time,X,Y",1);
+        } catch (Exception e){
+
+        }
+        int i = -1;
+        while (opModeIsActive()){
+            a.UpdatePos();
+
+            try {
+                logUtils.Log(logUtils.logType.normal, Calendar.getInstance().getTime().toString() + "," + a.CurrentPos.X + "," + a.CurrentPos.Y,1);
+
+            } catch (Exception e){
+
+            }
+            if (i == 0 ) {
+                TelemetryPacket c = new TelemetryPacket();
+                c.put("Status","MoveSideways");
+                a.dashboard.sendTelemetryPacket(c);
+                a.MoveSideWaySeconds(1,5);
+                i=1;
+            } else if (i == 1){
+                a.TurnToAngle(90,.45,0.25);
+                i = 2;
+            } else {
+
+            }
+        }
+        logUtils.StopLogging(1);
+
+
         //a.DriveForwardCorrection(3, .5f);
     }
 

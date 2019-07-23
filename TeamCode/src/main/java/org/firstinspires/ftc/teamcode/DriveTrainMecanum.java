@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.MathEssentials.MathFunctions;
 
 // A four-wheeled drivetrain, for autonomous programming
 public class DriveTrainMecanum {
+    public RobotConstants robotConstants;
     public DcMotor MotorBackLeft;
     public DcMotor MotorBackRight;
     public DcMotor MotorFrontLeft;
@@ -67,6 +68,11 @@ public class DriveTrainMecanum {
             MotorFrontLeft.setPower(left);
             MotorBackLeft.setPower(left);
         }
+        MotorBackLeft.setPower(0);
+        MotorFrontLeft.setPower(0);
+        MotorFrontRight.setPower(0);
+        MotorBackRight.setPower(0);
+
     }
 
     /**
@@ -86,17 +92,21 @@ public class DriveTrainMecanum {
             imu.getAngularVelocity().unit = AngleUnit.DEGREES;
             dashboard.sendTelemetryPacket(packet);
             if (delta > 0) {
-                MotorBackLeft.setPower(speed*(Math.abs(delta/22.5)) + -0.005* imu.getAngularVelocity().zRotationRate);
-                MotorFrontLeft.setPower(speed*(Math.abs(delta/22.5))+ -0.005* imu.getAngularVelocity().zRotationRate);
-                MotorFrontRight.setPower(speed*(Math.abs(delta/22.5))+ -0.005* imu.getAngularVelocity().zRotationRate);
-                MotorBackRight.setPower(speed*(Math.abs(delta/22.5))+ -0.005* imu.getAngularVelocity().zRotationRate);
+                MotorBackLeft.setPower(speed*(Math.abs(delta/22.5)) + -0.005* imu.getAngularVelocity().zRotationRate + 0.1);
+                MotorFrontLeft.setPower(speed*(Math.abs(delta/22.5))+ -0.005* imu.getAngularVelocity().zRotationRate + 0.1);
+                MotorFrontRight.setPower(speed*(Math.abs(delta/22.5))+ -0.005* imu.getAngularVelocity().zRotationRate + 0.1);
+                MotorBackRight.setPower(speed*(Math.abs(delta/22.5))+ -0.005* imu.getAngularVelocity().zRotationRate + 0.1);
             } else {
-                MotorBackLeft.setPower(-speed*(Math.abs(delta/22.5))- -0.005* imu.getAngularVelocity().zRotationRate);
-                MotorFrontLeft.setPower(-speed*(Math.abs(delta/22.5))- -0.005* imu.getAngularVelocity().zRotationRate);
-                MotorFrontRight.setPower(-speed*(Math.abs(delta/22.5))- -0.005* imu.getAngularVelocity().zRotationRate);
-                MotorBackRight.setPower(-speed*(Math.abs(delta/22.5)) - -0.005* imu.getAngularVelocity().zRotationRate);
+                MotorBackLeft.setPower(-speed*(Math.abs(delta/22.5))- -0.005* imu.getAngularVelocity().zRotationRate - 0.1);
+                MotorFrontLeft.setPower(-speed*(Math.abs(delta/22.5))- -0.005* imu.getAngularVelocity().zRotationRate - 0.1);
+                MotorFrontRight.setPower(-speed*(Math.abs(delta/22.5))- -0.005* imu.getAngularVelocity().zRotationRate -0.1);
+                MotorBackRight.setPower(-speed*(Math.abs(delta/22.5)) - -0.005* imu.getAngularVelocity().zRotationRate - 0.1);
             }
         }
+        MotorBackLeft.setPower(0);
+        MotorFrontLeft.setPower(0);
+        MotorFrontRight.setPower(0);
+        MotorBackRight.setPower(0);
     }
 
     /**
@@ -112,6 +122,10 @@ public class DriveTrainMecanum {
             MotorFrontRight.setPower(_speed);
             MotorBackRight.setPower(-_speed);
         }
+        MotorBackLeft.setPower(0);
+        MotorFrontLeft.setPower(0);
+        MotorFrontRight.setPower(0);
+        MotorBackRight.setPower(0);
     }
 
 }

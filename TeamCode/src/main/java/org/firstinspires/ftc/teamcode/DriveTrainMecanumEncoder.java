@@ -44,7 +44,7 @@ public class DriveTrainMecanumEncoder extends DriveTrainMecanum {
         imu = _imu;
         xEncoderPulses = MotorFrontLeft.getCurrentPosition();
         yEncoderPulses = MotorBackLeft.getCurrentPosition();
-        CurrentPos = new Vector2();
+        CurrentPos = new Vector2(0,0);
         try {
             dashboard = FtcDashboard.getInstance();
         } catch (Exception e) {
@@ -52,15 +52,21 @@ public class DriveTrainMecanumEncoder extends DriveTrainMecanum {
         }
     }
 
+    /**
+        Used for updating the position of the robot via the Odometry system
+     */
     public void UpdatePos() {
+        //putting the angle of the robot in a variable to reduce calls to the imu(which are slower)
+        double angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
         int xPulsesCurrent = MotorFrontLeft.getCurrentPosition();
         int yPulsesCurrent = MotorBackLeft.getCurrentPosition();
 
+        //calculate deltas
         if (xPulsesCurrent!=xEncoderPulses) {
             /**
              *  delta x in mm
              * */
-             dx = (xPulsesCurrent - xEncoderPulses) * mmPerPulse * Math.asin(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle);
+             dx = (xPulsesCurrent - xEncoderPulses) * mmPerPulse * Math.asin(Math.toRadians(angle));
         } else{
             dx=0;
         }
@@ -68,10 +74,11 @@ public class DriveTrainMecanumEncoder extends DriveTrainMecanum {
         /**
          *  delta y in mm
          * */
-        dy = (yPulsesCurrent-yEncoderPulses)*mmPerPulse*Math.acos(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle);
-        } else{
-        dy=0;
+            dy = ((yPulsesCurrent - yEncoderPulses) * mmPerPulse * Math.acos(Math.toRadians(angle)))/10;
+        } else  {
+            dy=0;
         }
+        //add the deltas to the current position
         CurrentPos = new Vector2(CurrentPos.X + dx,CurrentPos.Y + dy);
 
         TelemetryPacket b = new TelemetryPacket();
@@ -81,32 +88,41 @@ public class DriveTrainMecanumEncoder extends DriveTrainMecanum {
         b.put("dY", dy);
         b.put("xPos", CurrentPos.X);
         b.put("yPos", CurrentPos.Y);
-        b.fieldOverlay().fillRect(CurrentPos.X/25.4 ,CurrentPos.Y/25.4 ,20,20);
+        b.put("anlge", angle);
+        //b.fieldOverlay().fillRect(CurrentPos.X/25.4 ,CurrentPos.Y/25.4 ,20,20);
         dashboard.sendTelemetryPacket(b);
         xEncoderPulses = xPulsesCurrent;
         yEncoderPulses = yPulsesCurrent;
     }
 
+    /**
+     * Used for updating the position of the robot via the Odometry system
+     * @param packet the telemetry packet to which all the telemetry stuff is added
+     */
     public void UpdatePos(TelemetryPacket packet) {
+        //putting the angle of the robot in a variable to reduce calls to the imu(which are slower)
+        double angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
         int xPulsesCurrent = MotorFrontLeft.getCurrentPosition();
         int yPulsesCurrent = MotorBackLeft.getCurrentPosition();
 
+        //calculate deltas
         if (xPulsesCurrent!=xEncoderPulses) {
             /**
              *  delta x in mm
              * */
-            dx = (xPulsesCurrent - xEncoderPulses) * mmPerPulse * Math.asin(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle);
-        } else {
+            dx = (xPulsesCurrent - xEncoderPulses) * mmPerPulse * Math.asin(Math.toRadians(angle));
+        } else{
             dx=0;
         }
         if (yPulsesCurrent!=yEncoderPulses) {
             /**
              *  delta y in mm
              * */
-            dy = (yPulsesCurrent-yEncoderPulses)*mmPerPulse*Math.acos(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle);
-        } else {
+            dy = ((yPulsesCurrent-yEncoderPulses) * mmPerPulse * Math.acos(Math.toRadians(angle)))/10;
+        } else{
             dy=0;
         }
+        //add the deltas to the current position
         CurrentPos = new Vector2(CurrentPos.X + dx,CurrentPos.Y + dy);
 
 
@@ -114,8 +130,10 @@ public class DriveTrainMecanumEncoder extends DriveTrainMecanum {
         packet.put("yPulse", MotorBackLeft.getCurrentPosition());
         packet.put("xPos", CurrentPos.X);
         packet.put("yPos", CurrentPos.Y);
+        packet.put("angle", angle);
         //divide by 25.4 because from mm to inches
-        packet.fieldOverlay().fillRect(CurrentPos.X/25.4 + 77,CurrentPos.Y/25.4 + 77,20,20);
+        //
+        // packet.fieldOverlay().fillRect(CurrentPos.X/25.4 + 77,CurrentPos.Y/25.4 + 77,20,20);
         dashboard.sendTelemetryPacket(packet);
         xEncoderPulses = xPulsesCurrent;
         yEncoderPulses = yPulsesCurrent;
